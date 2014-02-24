@@ -1,0 +1,15 @@
+body{
+	font-family: 'Open Sans', sans-serif;
+	background: url(../img/ui/bg.gif) center top no-repeat;
+	margin:30px;
+}
+p, li{
+	line-height: 1.6em;
+	font-size: 1.3em;
+}
+a, a:hover{
+	color:#04819E;
+}
+header{
+	height:400px;
+}
