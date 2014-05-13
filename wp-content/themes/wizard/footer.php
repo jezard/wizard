@@ -11,15 +11,30 @@
 	</div><!-- #content -->
 
 	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'http://wordpress.org/', 'wizard' ) ); ?>"><?php printf( __( 'Proudly powered by %s', 'wizard' ), 'WordPress' ); ?></a>
-			<span class="sep"> | </span>
-			<?php printf( __( 'Theme: %1$s by %2$s.', 'wizard' ), 'wizard', '<a href="http://underscores.me/" rel="designer">Underscores.me</a>' ); ?>
+		<div class="site-info grid grid-pad">
+		
+			<div class="subfooter col-9-12"><?php bloginfo( 'description' ); ?></div>
+			<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer Widgets') ) : ?>
+			<?php endif; ?>
+		
+			<div style="clear:both;"></div>
+			<div class="col-1-1"><hr></div>
+			<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer legal') ) : ?>
+			<?php endif; ?>
+			
+		
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
+
+<script>
+	var _gaq=[['_setAccount','UA-XXXXXXX-1'],['_trackPageview']];
+	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+	g.src='//www.google-analytics.com/ga.js';
+	s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
 
 </body>
 </html>

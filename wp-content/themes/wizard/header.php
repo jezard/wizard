@@ -24,16 +24,18 @@
 
 	<header id="masthead" class="site-header" role="banner">
 		<div class="site-branding grid grid-pad">
-			<div class="site-title col-1-2"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></div>
-			<div class="site-description col-1-2"><?php bloginfo( 'description' ); ?></div>
+			<div class="site-title col-1-4"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img class="wt-logo" src="<?php echo do_shortcode('[blogurl]'); ?>website-images/wt-logo.png" title="<?php bloginfo( 'name' ); ?>"  alt="<?php bloginfo( 'name' ); ?>" /></a></div>
+			<div class="site-description col-9-12">
+				<nav id="site-navigation" class="main-navigation" role="navigation">
+					<button class="menu-toggle"><?php _e( 'Primary Menu', 'wizard' ); ?></button>
+					<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'wizard' ); ?></a>
+					<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
+				</nav><!-- #site-navigation -->
+			</div>
 		</div>
-
-		<nav id="site-navigation" class="main-navigation" role="navigation">
-			<button class="menu-toggle"><?php _e( 'Primary Menu', 'wizard' ); ?></button>
-			<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'wizard' ); ?></a>
-
-			<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
-		</nav><!-- #site-navigation -->
+		
+		
+		
 	</header><!-- #masthead -->
 
 	<div id="content" class="site-content grid grid-pad">

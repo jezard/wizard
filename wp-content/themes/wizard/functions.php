@@ -81,6 +81,16 @@ function wizard_widgets_init() {
 		'before_title'  => '<h1 class="widget-title">',
 		'after_title'   => '</h1>',
 	) );
+	register_sidebar(array(
+       'name'=>'Footer Widgets',
+       'before_widget' => '<div id="%1$s" class="widget subfooter col-1-4 %2$s">',
+       'after_widget' => '</div>',
+   ));
+   register_sidebar(array(
+       'name'=>'Footer legal',
+       'before_widget' => '<div id="%1$s" class="widget  col-1-2 %2$s">',
+       'after_widget' => '</div>',
+   ));
 }
 add_action( 'widgets_init', 'wizard_widgets_init' );
 

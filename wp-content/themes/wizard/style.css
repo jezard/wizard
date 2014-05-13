@@ -135,7 +135,7 @@ textarea {
 	color: #404040;
 	font-family: 'Lato', sans-serif;
 	font-size: 16px;
-	font-size: 1.6rem;
+	font-size: 1.6em;
 	line-height: 1.5;
 }
 h1, h2, h3, h4, h5, h6 {
@@ -347,15 +347,17 @@ textarea {
 5.1 Links
 --------------------------------------------------------------*/
 a {
-	color: royalblue;
+	color:#66635e;
+	text-decoration:none;
 }
 a:visited {
-	color: purple;
+	color:#66635e;
 }
 a:hover,
 a:focus,
 a:active {
-	color: midnightblue;
+	color: #fb4b02;
+	text-decoration:underline;
 }
 
 /*--------------------------------------------------------------
@@ -364,8 +366,9 @@ a:active {
 .main-navigation {
 	clear: both;
 	display: block;
-	float: left;
-	width: 100%;
+	float: right;
+	/*width: 100%;*/
+	margin-top:47px;
 }
 .main-navigation ul {
 	list-style: none;
@@ -375,6 +378,10 @@ a:active {
 .main-navigation li {
 	float: left;
 	position: relative;
+	font-weight:400;
+	font-size:1.1em;
+	text-transform:uppercase;
+	padding-left:52px;
 }
 .main-navigation a {
 	display: block;
@@ -409,6 +416,7 @@ a:active {
 }
 .main-navigation .current_page_item a,
 .main-navigation .current-menu-item a {
+	
 }
 /* Small menu */
 .menu-toggle {
@@ -825,4 +833,43 @@ body {
 		padding-left: 20px;
 		padding-right: 20px;
 	}
+}
+
+/*--------------------------------------------------------------
+My Styles
+--------------------------------------------------------------*/
+hr {
+	background-color: transparent;
+	border: 1px dotted #66635e;
+	display: block;
+	height:3px;
+}
+/*header*/
+.site-header{
+	background: #ffffff;
+	padding-bottom:18px;
+}
+ 
+.site-branding{
+	margin-top:16px;
+}
+.wt-logo{width:86%}
+
+/*footer*/
+.subfooter{
+	margin-bottom:50px;
+	font-size:1.2em;
+}
+.right-col{
+	text-align:right;
+}
+.site-info{
+	font-weight:300;
+	font-size:0.8em;
+}
+.jodesign{
+	height:20px;
+}
+.jodesign a, .jodesign img, .jodesign span{
+	vertical-align:middle;
 }
