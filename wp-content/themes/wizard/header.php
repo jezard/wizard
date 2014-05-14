@@ -38,4 +38,4 @@
 		
 	</header><!-- #masthead -->
 
-	<div id="content" class="site-content grid grid-pad">
+	<div id="content" class="site-content">

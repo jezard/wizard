@@ -28,6 +28,8 @@
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
+<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/jQuery.js"></script>
+<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/main.js"></script>
 
 <script>
 	var _gaq=[['_setAccount','UA-XXXXXXX-1'],['_trackPageview']];
