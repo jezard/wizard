@@ -862,6 +862,7 @@ h1.entry-title{
 	font-size:76px;
 	text-align:center;
 	text-shadow: 0px 1px 3px #fff;
+	margin-left: -20px;
 }
 .services-top{
 	padding-top:10px;
@@ -893,6 +894,41 @@ h1.entry-title{
  	font-weight: 300
 }
 /*projects*/
+.portfolio-thumb span{
+	width:270px;
+	height:235px;
+	display: block;
+	margin: 0 auto;
+}
+
+.img-shadow {
+	position: relative;
+	max-width: 100%;
+	float: left;
+}
+    
+.img-shadow::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	-webkit-box-shadow: inset 0px 0px 13px 4px rgba(0,0,0,0.63);
+	-moz-box-shadow: inset 0px 0px 13px 4px rgba(0,0,0,0.63);
+	box-shadow: inset 0px 0px 13px 4px rgba(0,0,0,0.63);
+	border-radius:50%;
+} 
+	   
+.img-shadow img {
+	float: left;
+	border-radius:50%;
+} 
+#sub-images{
+	clear:both;
+	height:30px;
+}
+
 
 
 

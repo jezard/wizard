@@ -46,7 +46,7 @@ function wizard_setup() {
 	) );
 
 	// Enable support for Post Formats.
-	add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'quote', 'link' ) );
+	add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'quote', 'link') );
 
 	// Setup the WordPress core custom background feature.
 	add_theme_support( 'custom-background', apply_filters( 'wizard_custom_background_args', array(
@@ -62,6 +62,9 @@ function wizard_setup() {
 		'gallery',
 		'caption',
 	) );
+
+	/* Enable featured images */
+	add_theme_support('post-thumbnails');
 }
 endif; // wizard_setup
 add_action( 'after_setup_theme', 'wizard_setup' );
@@ -134,3 +137,56 @@ require get_template_directory() . '/inc/customizer.php';
  * Load Jetpack compatibility file.
  */
 require get_template_directory() . '/inc/jetpack.php';
+
+
+
+// Register Custom Post Type
+function custom_post_type() {
+
+	$labels = array(
+		'name'                => _x( 'Projects', 'Post Type General Name', 'text_domain' ),
+		'singular_name'       => _x( 'project', 'Post Type Singular Name', 'text_domain' ),
+		'menu_name'           => __( 'Projects', 'text_domain' ),
+		'parent_item_colon'   => __( 'Parent Item:', 'text_domain' ),
+		'all_items'           => __( 'All Projects', 'text_domain' ),
+		'view_item'           => __( 'View Project', 'text_domain' ),
+		'add_new_item'        => __( 'Add New Project', 'text_domain' ),
+		'add_new'             => __( 'Add New', 'text_domain' ),
+		'edit_item'           => __( 'Edit Project', 'text_domain' ),
+		'update_item'         => __( 'Update Project', 'text_domain' ),
+		'search_items'        => __( 'Search Projects', 'text_domain' ),
+		'not_found'           => __( 'No Projects found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'Not Projects found in Trash', 'text_domain' ),
+	);
+	$args = array(
+		'label'               => __( 'Projects', 'text_domain' ),
+		'description'         => __( 'Showcase of work', 'text_domain' ),
+		'labels'              => $labels,
+		'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'trackbacks', 'revisions', 'custom-fields', 'page-attributes', ),
+		'taxonomies'          => array( 'category', 'post_tag' ),
+		'hierarchical'        => false,
+		'public'              => true,
+		'show_ui'             => true,
+		'show_in_menu'        => true,
+		'show_in_nav_menus'   => true,
+		'show_in_admin_bar'   => true,
+		'menu_position'       => 5,
+		'menu_icon'           => '',
+		'can_export'          => true,
+		'has_archive'         => false,
+		'exclude_from_search' => false,
+		'publicly_queryable'  => true,
+		'capability_type'     => 'page',
+	);
+	register_post_type( 'Projects', $args );
+
+}
+
+// Hook into the 'init' action
+add_action( 'init', 'custom_post_type', 0 );
+
+
+/* create project thumbnail size */
+if ( function_exists( 'add_image_size' ) ) { 
+	add_image_size( 'project-thumb', 270, 270, array( 'left', 'top' ) ); // Hard crop left top
+}
