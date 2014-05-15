@@ -867,6 +867,7 @@ h1.entry-title{
 	padding-top:10px;
 	width:100%;
 }
+
 /*services*/
 .services-page{
 	position:relative;
@@ -874,8 +875,8 @@ h1.entry-title{
 .services-break{
 	height:30px;
 }
-.icon{
-	width: 40%;
+.service-icon{
+	width: 141px;
 	margin: 0 auto;
 }
 #bg-grad-top{
@@ -884,6 +885,15 @@ h1.entry-title{
 	top:0;
 	position:absolute;
 }
+.services-col p{
+ 	width:90%;
+ 	margin:0 auto;
+ 	padding:30px 0;
+ 	color:#8E8E8E;
+ 	font-weight: 300
+}
+/*projects*/
+
 
 
 /*footer*/
@@ -903,4 +913,13 @@ h1.entry-title{
 }
 .jodesign a, .jodesign img, .jodesign span{
 	vertical-align:middle;
+}
+/* media queries */
+@media (max-width: 767px) {
+  	p {
+    	font-size: 1.3em;
+  	}
+  	.service-icon{
+		width: 40%;
+	}
 }

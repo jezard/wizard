@@ -1,14 +1,13 @@
 <?php
 /*
-Template Name: Services template
+Template Name: Projects template
 */
 
 get_header(); ?>
 	<!-- full width bg -->
 	
 	
-	<div class="content-area services-page" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper.gif';?>); background-position:0 55px">
-		<div id="bg-grad-top" class="content-area" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper-grad.gif';?>)"></div>
+	<div class="content-area projects-page" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/canvas-bg.gif';?>); background-position:0 55px">
 		<main class="site-main" role="main">
 		
 			<!-- inner content section -->

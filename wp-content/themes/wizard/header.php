@@ -24,7 +24,7 @@
 
 	<header id="masthead" class="site-header" role="banner">
 		<div class="site-branding grid grid-pad">
-			<div class="site-title col-1-4"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img class="wt-logo" src="<?php echo do_shortcode('[blogurl]'); ?>website-images/wt-logo.png" title="<?php bloginfo( 'name' ); ?>"  alt="<?php bloginfo( 'name' ); ?>" /></a></div>
+			<nav class="site-title col-1-4"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img class="wt-logo" src="<?php echo do_shortcode('[blogurl]'); ?>website-images/wt-logo.png" title="<?php bloginfo( 'name' ); ?>"  alt="<?php bloginfo( 'name' ); ?>" /></a></nav>
 			<div class="site-description col-9-12">
 				<nav id="site-navigation" class="main-navigation" role="navigation">
 					<button class="menu-toggle"><?php _e( 'Primary Menu', 'wizard' ); ?></button>
