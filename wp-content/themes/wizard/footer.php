@@ -31,6 +31,7 @@
 <script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/jQuery.js"></script>
 <script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/main.js"></script>
 
+
 <script>
 	var _gaq=[['_setAccount','UA-XXXXXXX-1'],['_trackPageview']];
 	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
