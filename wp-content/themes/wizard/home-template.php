@@ -24,11 +24,17 @@ get_header(); ?>
 						$content = apply_filters('the_content', $page->post_content); 
 						echo $content; 
 					?>
-				</div>
 
+				</div>
 			</div>
 
-			<section id="work"></section>
+
+
+			<section id="work">
+
+				<?php include 'portfolio-inner.php'; ?>	
+
+			</section>
 
 			<section id="about"></section>
 			
@@ -40,5 +46,5 @@ get_header(); ?>
 <?php get_footer(); ?>
 <script type="text/javascript">
 
-jQuery('#work').load('<?php get_bloginfo('url'); ?>/work/ #projects-page')
+//jQuery('#work').load('<?php get_bloginfo('url'); ?>/work/ #projects-page')
 </script>
