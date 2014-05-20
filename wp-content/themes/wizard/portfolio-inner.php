@@ -22,7 +22,7 @@
 				?>
 
 
-				<?php $args = array('post_type' => 'projects', 'paged' => $paged, 'posts_per_page' => 1); ?>
+				<?php $args = array('post_type' => 'projects', 'paged' => $paged, 'posts_per_page' => 3); ?>
 
 				<?php $wp_query = null; ?>
 				<?php $wp_query = new WP_Query(); ?>
@@ -39,22 +39,9 @@
 				<div class="clear"></div>
 
 
-				<nav id="newer-projects" title="Newer Projects"><?php posts_nav_link( ' ', '<img src="' . get_bloginfo('url') . '/website-images/previous.png" />', ' ' ); ?></nav>
-				<nav id="older-projects" title="Older Projects"><?php posts_nav_link( ' ', ' ', '<img src="' . get_bloginfo('url') . '/website-images/next.png" />' ); ?></nav>
+				<nav id="newer-projects" title="Newer Projects"><?php previous_posts_link('&laquo; Newer Projects' ); ?></nav>
+				<nav id="older-projects" title="Older Projects"><?php next_posts_link('Older Projects &raquo;'); ?> </nav>
 
-
-				<?php
-					$the_last_page = $wp_query->max_num_pages;
-					$loaded_page = intval($paged);
-					echo $loaded_page;
-				?>
-				<?php if ( $the_last_page == $loaded_page) { ?> 
-					<nav id="newer-projects" title="Newer Projects"><a href="<?php previous_posts(); ?>"><img src="<?php echo get_bloginfo('url') . '/website-images/previous.png' ?>" /></a></nav>
-				<?php } elseif ($loaded_page == 1) { ?> 
-					<nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>"><img src="<?php echo get_bloginfo('url') . '/website-images/next.png' ?>" /></a></nav> 
-				<?php } else { ?> 
-					<nav id="newer-projects" title="Newer Projects"><a href="<?php previous_posts(); ?>"><img src="<?php echo get_bloginfo('url') . '/website-images/previous.png' ?>" /></a></nav> <nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>"><img src="<?php echo get_bloginfo('url') . '/website-images/next.png' ?>" /></a></nav> 
-				<?php } ?>
 
 				<?php endif; ?>
 
