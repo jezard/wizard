@@ -8,7 +8,7 @@
 
 					$page_title = 'Work';
 					echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
-					echo '<div class="services-break"></div>';
+					echo '<div class="section-break"></div>';
 					$pager = get_page_by_title( $page_title );
 
 				?>
@@ -51,32 +51,33 @@
 				<div id="sub-images"></div>
 				<div class="clear"></div>
 
+				<div class="col-1-1">
+					<?php
+						$the_last_page = $wp_query->max_num_pages;
+						$loaded_page = intval($paged);
+					?>
+					<?php if ( $the_last_page == $loaded_page) { ?> 
+						<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav>
+					<?php } elseif ($loaded_page == 1) { ?> 
+						<nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
+					<?php } else { ?> 
+						<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav> <nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
+					<?php } ?>
 
-				<?php
-					$the_last_page = $wp_query->max_num_pages;
-					$loaded_page = intval($paged);
-				?>
-				<?php if ( $the_last_page == $loaded_page) { ?> 
-					<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav>
-				<?php } elseif ($loaded_page == 1) { ?> 
-					<nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
-				<?php } else { ?> 
-					<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav> <nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
-				<?php } ?>
+					<?php endif; ?>
 
-				<?php endif; ?>
+					<div id="sub-images"></div>
+					<div class="clear"></div>
 
-				<div id="sub-images"></div>
-				<div class="clear"></div>
-
-				
-				<?php
-					//if the last page of the projects portfolio and being shown on homepage...
-					if ( $front_page && $the_last_page == $loaded_page) {
-					    $content = apply_filters('the_content', $pager->post_content);
-					    echo '<hr><aside class="eop">'.$content.'</aside><hr>';
-					} 
-				?>
+					
+					<?php
+						//if the last page of the projects portfolio and being shown on homepage...
+						if ( $front_page && $the_last_page == $loaded_page) {
+						    $content = apply_filters('the_content', $pager->post_content);
+						    echo '<hr><aside class="eop">'.$content.'</aside>';
+						} 
+					?>
+				</div>
 
 
 				<?php wp_reset_postdata(); ?>

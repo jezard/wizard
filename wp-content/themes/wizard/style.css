@@ -864,6 +864,10 @@ h1.entry-title{
 	text-shadow: 0px 1px 3px #fff;
 	margin-left: -20px;
 }
+h1.lightest-text{
+	color:#ffffff;
+	text-shadow: 0px 1px 3px #000;
+}
 .services-top{
 	padding-top:10px;
 	width:100%;
@@ -871,14 +875,14 @@ h1.entry-title{
 .clear{
 	clear:both;
 }
-#services-page, #home-page{
+#services-page, #home-page, #about-page{
 	position:relative;
 }
 
 /*services*/
 
 
-.services-break{
+.section-break{
 	height:30px;
 }
 .service-icon{
@@ -948,6 +952,17 @@ svg {
 	font-size: 0.9em;
 }
 
+/*about*/
+#about p{
+	font-size: 1.7em;
+	color:#fff;
+	font-weight: 300;
+}
+
+#about a{
+	color:#fb4b02;
+}
+
 
 /*footer*/
 .subfooter{
@@ -968,10 +983,13 @@ svg {
 }
 /* media queries */
 @media (max-width: 767px) {
-  	p {
+  	p, #newer-projects, #older-projects{
     	font-size: 1.3em;
+
   	}
   	.service-icon{
 		width: 40%;
 	}
+
+
 }
