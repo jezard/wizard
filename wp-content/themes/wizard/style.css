@@ -855,7 +855,28 @@ hr {
 .site-branding{
 	margin-top:16px;
 }
-.wt-logo{width:86%}
+/*.wt-logo{width:86%}*/
+
+/* fixed header styles */
+.fixed-header{
+	position:fixed;
+	width:100%;
+	z-index: 999;
+	top:0;
+	height: 144px;
+}
+.wt-logo{
+	max-width: 224px;
+	max-height:84px;
+}
+div.anchor{display: block; position: relative; top: -144px; visibility: hidden;}
+
+.offset-top{
+	top:144px;
+	position: relative;
+}
+/*end of fixed header styles*/
+
 
 /*pages*/
 h1.entry-title{
@@ -1000,7 +1021,7 @@ svg {
 	vertical-align:middle;
 }
 #colophon{
-	margin-top:30px;
+	margin-top:174px;
 }
 /* media queries */
 @media (max-width: 767px) {
