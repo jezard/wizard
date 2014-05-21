@@ -337,7 +337,7 @@ textarea {
 	overflow: auto; /* Removes default vertical scrollbar in IE6/7/8/9 */
 	padding-left: 3px;
 	vertical-align: top; /* Improves readability and alignment in all browsers */
-	width: 98%;
+	width: 100%;
 }
 
 /*--------------------------------------------------------------
@@ -387,6 +387,9 @@ a:active {
 	display: block;
 	text-decoration: none;
 }
+.main-navigation a:hover {
+	border-bottom:3px #8e8e8e solid;
+}
 .main-navigation ul ul {
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
 	display: none;
@@ -414,8 +417,7 @@ a:active {
 .main-navigation ul li:hover > ul {
 	display: block;
 }
-.main-navigation .current_page_item a,
-.main-navigation .current-menu-item a {
+.main-navigation .current-menu-item:last-of-type a {
 	border-bottom:3px #8e8e8e solid;
 }
 /* Small menu */
@@ -962,11 +964,27 @@ svg {
 #about a{
 	color:#fb4b02;
 }
-
+/* contact */
+#contact textarea{
+	width:100%;
+}
+#contact-submit{
+	float: right;
+}
+#contact address{
+	font-size: 30px;
+	font-weight: bold;
+	width:300px;
+	margin:150px 0 0 100px;
+}
+.sm-icon{
+	float:left;
+	margin-right: 30px;
+}
 
 /*footer*/
 .subfooter{
-	margin-bottom:50px;
+	/*margin-bottom:50px;*/
 	font-size:0.9em;
 }
 .right-col{
@@ -981,6 +999,9 @@ svg {
 .jodesign a, .jodesign img, .jodesign span{
 	vertical-align:middle;
 }
+#colophon{
+	margin-top:30px;
+}
 /* media queries */
 @media (max-width: 767px) {
   	p, #newer-projects, #older-projects{
@@ -990,6 +1011,27 @@ svg {
   	.service-icon{
 		width: 40%;
 	}
+	#contact-submit{
+		float: none;
+	}
 
+	#contact address{
+		width:auto;
+		margin:auto
+	}
+	.subfooter, small{
+		font-size: 1.5em;
+		float:left;
+		clear:both;
+	}
+	.right-col{
+		text-align: left;
+	}
+	.copyright{
+		margin-top:20px;
+	}
+	.contact-form input[type="text"], .contact-form input[type="email"]{
+		width:95%;
+	}
 
 }

@@ -54,8 +54,23 @@ get_header(); ?>
 
 
 			</section>
-			
+
 			<section id="contact">
+
+				<div class="grid grid-pad">
+					
+
+					<?php
+						$page_title = 'Contact';
+						echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
+						echo '<div class="section-break"></div>';
+						$page = get_page_by_title( $page_title );
+						$content = apply_filters('the_content', $page->post_content); 
+						echo $content; 
+						echo '<div class="section-break"></div>';
+					?>
+					</div>
+				</div>
 
 			</section>
 			
