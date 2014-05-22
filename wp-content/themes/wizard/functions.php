@@ -190,3 +190,8 @@ add_action( 'init', 'custom_post_type', 0 );
 if ( function_exists( 'add_image_size' ) ) { 
 	add_image_size( 'project-thumb', 270, 270, array( 'left', 'top' ) ); // Hard crop left top
 }
+
+/*create post thumbnail size */
+if ( function_exists( 'add_image_size' ) ) {
+	add_image_size( 'post-thumb', 325, 325, array( 'left', 'top' ) ); // Hard crop left top
+}

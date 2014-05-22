@@ -1,3 +1,4 @@
+/*Orange color: #fb4b02;*/
 /*
 Theme Name: wizard
 Theme URI: http://underscores.me/
@@ -883,9 +884,7 @@ h1.entry-title{
 	padding-top:10px;
 	font-weight:100;
 	font-size:76px;
-	text-align:center;
 	text-shadow: 0px 1px 3px #fff;
-	margin-left: -20px;
 }
 h1.lightest-text{
 	color:#ffffff;
@@ -898,9 +897,11 @@ h1.lightest-text{
 .clear{
 	clear:both;
 }
-#services-page, #home-page, #about-page{
-	position:relative;
+#services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title{
+	text-align:center;
+	margin-left: -20px;
 }
+
 
 /*services*/
 
@@ -1002,6 +1003,75 @@ svg {
 	float:left;
 	margin-right: 30px;
 }
+/*blog*/
+#bg-grad-top-blog{
+	height:57px;
+	width:100%;
+	top:144px;
+	position:absolute;
+}
+.blog-intro{
+	margin-top:40px;
+}
+img.me{
+	border-radius: 50%;
+	width:150px;
+
+}
+#blog-index h1.entry-title {
+	margin:-40px 0 0 -10px;
+	display:block;
+}
+#blog-index div.entry-content {
+	margin: 0;
+	font-size: 30px;
+	font-weight: 300;
+	line-height: 38px;
+}
+
+#newer-posts{
+	float: left;
+}
+#older-posts{
+	float: right;
+	margin-right: 20px;
+}
+#newer-posts, #older-posts{
+	position: relative;
+	font-size: 1.2em;
+}
+#newer-posts a, #older-posts a, .post-excerpt a{
+	color: #fb4b02;
+}
+#newer-posts a:hover, #older-posts a:hover{
+	text-decoration:none;
+}
+img.nav-arrow{
+	vertical-align: middle;
+}
+.post-excerpt h1{
+	font-size: 42px;
+	font-weight: 300;
+}
+
+.post-excerpt p{
+	font-size: 24px;
+	font-weight: 300;
+	margin-bottom: 0.3em;
+}
+post-excerpt a{
+	font-size: 20px;
+	font-weight: 400;
+}
+.post-excerpt{
+	margin-bottom: 35px;
+	overflow:hidden;
+}
+
+.trans-bg{
+	background:gray;
+}
+
 
 /*footer*/
 .subfooter{

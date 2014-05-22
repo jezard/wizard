@@ -10,7 +10,6 @@ get_header(); ?>
 	<div id="services-page" class="content-area" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper.gif';?>); background-position:0 55px">
 		<div id="bg-grad-top" class="content-area" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper-grad.gif';?>)"></div>
 		<main class="site-main" role="main">
-		
 			<!-- inner content section -->
 			<div class="grid grid-pad">
 				<?php while ( have_posts() ) : the_post(); ?>
