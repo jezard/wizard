@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 21, 2014 at 12:24 PM
+-- Generation Time: May 22, 2014 at 08:55 AM
 -- Server version: 5.5.23
 -- PHP Version: 5.4.11
 
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `wp_options` (
   `autoload` varchar(20) NOT NULL DEFAULT 'yes',
   PRIMARY KEY (`option_id`),
   UNIQUE KEY `option_name` (`option_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=464 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=477 ;
 
 --
 -- Dumping data for table `wp_options`
@@ -211,9 +211,9 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (93, 'widget_archives', 'a:2:{i:2;a:3:{s:5:"title";s:0:"";s:5:"count";i:0;s:8:"dropdown";i:0;}s:12:"_multiwidget";i:1;}', 'yes'),
 (94, 'widget_meta', 'a:2:{i:2;a:1:{s:5:"title";s:0:"";}s:12:"_multiwidget";i:1;}', 'yes'),
 (95, 'sidebars_widgets', 'a:5:{s:19:"wp_inactive_widgets";a:0:{}s:9:"sidebar-1";a:6:{i:0;s:8:"search-2";i:1;s:14:"recent-posts-2";i:2;s:17:"recent-comments-2";i:3;s:10:"archives-2";i:4;s:12:"categories-2";i:5;s:6:"meta-2";}s:9:"sidebar-2";a:1:{i:0;s:6:"text-5";}s:9:"sidebar-3";a:2:{i:0;s:6:"text-3";i:1;s:6:"text-4";}s:13:"array_version";i:3;}', 'yes'),
-(96, 'cron', 'a:5:{i:1400683970;a:3:{s:16:"wp_version_check";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:17:"wp_update_plugins";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:16:"wp_update_themes";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1400684442;a:1:{s:19:"wp_scheduled_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1400684674;a:1:{s:30:"wp_scheduled_auto_draft_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1400701920;a:1:{s:20:"wp_maybe_auto_update";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}s:7:"version";i:2;}', 'yes'),
-(98, '_site_transient_update_core', 'O:8:"stdClass":4:{s:7:"updates";a:1:{i:0;O:8:"stdClass":10:{s:8:"response";s:6:"latest";s:8:"download";s:59:"https://downloads.wordpress.org/release/wordpress-3.9.1.zip";s:6:"locale";s:5:"en_US";s:8:"packages";O:8:"stdClass":5:{s:4:"full";s:59:"https://downloads.wordpress.org/release/wordpress-3.9.1.zip";s:10:"no_content";s:70:"https://downloads.wordpress.org/release/wordpress-3.9.1-no-content.zip";s:11:"new_bundled";s:71:"https://downloads.wordpress.org/release/wordpress-3.9.1-new-bundled.zip";s:7:"partial";b:0;s:8:"rollback";b:0;}s:7:"current";s:5:"3.9.1";s:7:"version";s:5:"3.9.1";s:11:"php_version";s:5:"5.2.4";s:13:"mysql_version";s:3:"5.0";s:11:"new_bundled";s:3:"3.8";s:15:"partial_version";s:0:"";}}s:12:"last_checked";i:1400658767;s:15:"version_checked";s:5:"3.9.1";s:12:"translations";a:0:{}}', 'yes'),
-(103, '_site_transient_update_themes', 'O:8:"stdClass":4:{s:12:"last_checked";i:1400658768;s:7:"checked";a:4:{s:14:"twentyfourteen";s:3:"1.1";s:14:"twentythirteen";s:3:"1.2";s:12:"twentytwelve";s:3:"1.4";s:6:"wizard";s:9:"1.0-wpcom";}s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'yes'),
+(96, 'cron', 'a:5:{i:1400745120;a:1:{s:20:"wp_maybe_auto_update";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1400770370;a:3:{s:16:"wp_version_check";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:17:"wp_update_plugins";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:16:"wp_update_themes";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1400770842;a:1:{s:19:"wp_scheduled_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1400771074;a:1:{s:30:"wp_scheduled_auto_draft_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}s:7:"version";i:2;}', 'yes'),
+(98, '_site_transient_update_core', 'O:8:"stdClass":4:{s:7:"updates";a:1:{i:0;O:8:"stdClass":10:{s:8:"response";s:6:"latest";s:8:"download";s:59:"https://downloads.wordpress.org/release/wordpress-3.9.1.zip";s:6:"locale";s:5:"en_US";s:8:"packages";O:8:"stdClass":5:{s:4:"full";s:59:"https://downloads.wordpress.org/release/wordpress-3.9.1.zip";s:10:"no_content";s:70:"https://downloads.wordpress.org/release/wordpress-3.9.1-no-content.zip";s:11:"new_bundled";s:71:"https://downloads.wordpress.org/release/wordpress-3.9.1-new-bundled.zip";s:7:"partial";b:0;s:8:"rollback";b:0;}s:7:"current";s:5:"3.9.1";s:7:"version";s:5:"3.9.1";s:11:"php_version";s:5:"5.2.4";s:13:"mysql_version";s:3:"5.0";s:11:"new_bundled";s:3:"3.8";s:15:"partial_version";s:0:"";}}s:12:"last_checked";i:1400741880;s:15:"version_checked";s:5:"3.9.1";s:12:"translations";a:0:{}}', 'yes'),
+(103, '_site_transient_update_themes', 'O:8:"stdClass":4:{s:12:"last_checked";i:1400741885;s:7:"checked";a:4:{s:14:"twentyfourteen";s:3:"1.1";s:14:"twentythirteen";s:3:"1.2";s:12:"twentytwelve";s:3:"1.4";s:6:"wizard";s:9:"1.0-wpcom";}s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'yes'),
 (104, '_site_transient_timeout_browser_710ad1dd7409f078fa401b586108ea26', '1400511176', 'yes'),
 (105, '_site_transient_browser_710ad1dd7409f078fa401b586108ea26', 'a:9:{s:8:"platform";s:7:"Windows";s:4:"name";s:6:"Chrome";s:7:"version";s:13:"34.0.1847.131";s:10:"update_url";s:28:"http://www.google.com/chrome";s:7:"img_src";s:49:"http://s.wordpress.org/images/browsers/chrome.png";s:11:"img_src_ssl";s:48:"https://wordpress.org/images/browsers/chrome.png";s:15:"current_version";s:2:"18";s:7:"upgrade";b:0;s:8:"insecure";b:0;}', 'yes'),
 (106, 'can_compress_scripts', '1', 'yes'),
@@ -240,7 +240,7 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (392, '_site_transient_timeout_poptags_40cd750bba9870f18aada2478b24840a', '1400604993', 'yes'),
 (393, '_site_transient_poptags_40cd750bba9870f18aada2478b24840a', 'a:40:{s:6:"widget";a:3:{s:4:"name";s:6:"widget";s:4:"slug";s:6:"widget";s:5:"count";s:4:"3898";}s:4:"post";a:3:{s:4:"name";s:4:"Post";s:4:"slug";s:4:"post";s:5:"count";s:4:"2456";}s:6:"plugin";a:3:{s:4:"name";s:6:"plugin";s:4:"slug";s:6:"plugin";s:5:"count";s:4:"2344";}s:5:"admin";a:3:{s:4:"name";s:5:"admin";s:4:"slug";s:5:"admin";s:5:"count";s:4:"1930";}s:5:"posts";a:3:{s:4:"name";s:5:"posts";s:4:"slug";s:5:"posts";s:5:"count";s:4:"1856";}s:7:"sidebar";a:3:{s:4:"name";s:7:"sidebar";s:4:"slug";s:7:"sidebar";s:5:"count";s:4:"1583";}s:7:"twitter";a:3:{s:4:"name";s:7:"twitter";s:4:"slug";s:7:"twitter";s:5:"count";s:4:"1329";}s:6:"google";a:3:{s:4:"name";s:6:"google";s:4:"slug";s:6:"google";s:5:"count";s:4:"1325";}s:8:"comments";a:3:{s:4:"name";s:8:"comments";s:4:"slug";s:8:"comments";s:5:"count";s:4:"1310";}s:6:"images";a:3:{s:4:"name";s:6:"images";s:4:"slug";s:6:"images";s:5:"count";s:4:"1260";}s:4:"page";a:3:{s:4:"name";s:4:"page";s:4:"slug";s:4:"page";s:5:"count";s:4:"1225";}s:5:"image";a:3:{s:4:"name";s:5:"image";s:4:"slug";s:5:"image";s:5:"count";s:4:"1121";}s:9:"shortcode";a:3:{s:4:"name";s:9:"shortcode";s:4:"slug";s:9:"shortcode";s:5:"count";s:4:"1000";}s:8:"facebook";a:3:{s:4:"name";s:8:"Facebook";s:4:"slug";s:8:"facebook";s:5:"count";s:3:"982";}s:5:"links";a:3:{s:4:"name";s:5:"links";s:4:"slug";s:5:"links";s:5:"count";s:3:"974";}s:3:"seo";a:3:{s:4:"name";s:3:"seo";s:4:"slug";s:3:"seo";s:5:"count";s:3:"950";}s:9:"wordpress";a:3:{s:4:"name";s:9:"wordpress";s:4:"slug";s:9:"wordpress";s:5:"count";s:3:"844";}s:7:"gallery";a:3:{s:4:"name";s:7:"gallery";s:4:"slug";s:7:"gallery";s:5:"count";s:3:"821";}s:6:"social";a:3:{s:4:"name";s:6:"social";s:4:"slug";s:6:"social";s:5:"count";s:3:"780";}s:3:"rss";a:3:{s:4:"name";s:3:"rss";s:4:"slug";s:3:"rss";s:5:"count";s:3:"722";}s:7:"widgets";a:3:{s:4:"name";s:7:"widgets";s:4:"slug";s:7:"widgets";s:5:"count";s:3:"686";}s:6:"jquery";a:3:{s:4:"name";s:6:"jquery";s:4:"slug";s:6:"jquery";s:5:"count";s:3:"681";}s:5:"pages";a:3:{s:4:"name";s:5:"pages";s:4:"slug";s:5:"pages";s:5:"count";s:3:"678";}s:5:"email";a:3:{s:4:"name";s:5:"email";s:4:"slug";s:5:"email";s:5:"count";s:3:"623";}s:4:"ajax";a:3:{s:4:"name";s:4:"AJAX";s:4:"slug";s:4:"ajax";s:5:"count";s:3:"615";}s:5:"media";a:3:{s:4:"name";s:5:"media";s:4:"slug";s:5:"media";s:5:"count";s:3:"595";}s:10:"javascript";a:3:{s:4:"name";s:10:"javascript";s:4:"slug";s:10:"javascript";s:5:"count";s:3:"572";}s:5:"video";a:3:{s:4:"name";s:5:"video";s:4:"slug";s:5:"video";s:5:"count";s:3:"570";}s:10:"buddypress";a:3:{s:4:"name";s:10:"buddypress";s:4:"slug";s:10:"buddypress";s:5:"count";s:3:"541";}s:4:"feed";a:3:{s:4:"name";s:4:"feed";s:4:"slug";s:4:"feed";s:5:"count";s:3:"539";}s:7:"content";a:3:{s:4:"name";s:7:"content";s:4:"slug";s:7:"content";s:5:"count";s:3:"530";}s:5:"photo";a:3:{s:4:"name";s:5:"photo";s:4:"slug";s:5:"photo";s:5:"count";s:3:"522";}s:4:"link";a:3:{s:4:"name";s:4:"link";s:4:"slug";s:4:"link";s:5:"count";s:3:"506";}s:6:"photos";a:3:{s:4:"name";s:6:"photos";s:4:"slug";s:6:"photos";s:5:"count";s:3:"505";}s:5:"login";a:3:{s:4:"name";s:5:"login";s:4:"slug";s:5:"login";s:5:"count";s:3:"471";}s:4:"spam";a:3:{s:4:"name";s:4:"spam";s:4:"slug";s:4:"spam";s:5:"count";s:3:"458";}s:5:"stats";a:3:{s:4:"name";s:5:"stats";s:4:"slug";s:5:"stats";s:5:"count";s:3:"453";}s:8:"category";a:3:{s:4:"name";s:8:"category";s:4:"slug";s:8:"category";s:5:"count";s:3:"452";}s:7:"youtube";a:3:{s:4:"name";s:7:"youtube";s:4:"slug";s:7:"youtube";s:5:"count";s:3:"436";}s:7:"comment";a:3:{s:4:"name";s:7:"comment";s:4:"slug";s:7:"comment";s:5:"count";s:3:"432";}}', 'yes'),
 (396, 'wpcf7', 'a:1:{s:7:"version";s:5:"3.8.1";}', 'yes'),
-(397, '_site_transient_update_plugins', 'O:8:"stdClass":3:{s:12:"last_checked";i:1400658768;s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'yes'),
+(397, '_site_transient_update_plugins', 'O:8:"stdClass":3:{s:12:"last_checked";i:1400741883;s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'yes'),
 (426, '_site_transient_timeout_browser_c458146e94640822382c6f7c4432d0b2', '1401259367', 'yes'),
 (427, '_site_transient_browser_c458146e94640822382c6f7c4432d0b2', 'a:9:{s:8:"platform";s:9:"Macintosh";s:4:"name";s:6:"Chrome";s:7:"version";s:13:"35.0.1916.114";s:10:"update_url";s:28:"http://www.google.com/chrome";s:7:"img_src";s:49:"http://s.wordpress.org/images/browsers/chrome.png";s:11:"img_src_ssl";s:48:"https://wordpress.org/images/browsers/chrome.png";s:15:"current_version";s:2:"18";s:7:"upgrade";b:0;s:8:"insecure";b:0;}', 'yes'),
 (428, '_transient_timeout_feed_ac0b00fe65abe10e0c5b588f3ed8c7ca', '1400697770', 'no');
@@ -261,10 +261,10 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (439, '_transient_feed_mod_b9388c83948825c1edaef0d856b7b109', '1400654572', 'no'),
 (440, '_transient_timeout_dash_4077549d03da2e451c8b5f002294ff51', '1400697772', 'no'),
 (441, '_transient_dash_4077549d03da2e451c8b5f002294ff51', '<div class="rss-widget"><ul><li><a class=''rsswidget'' href=''http://wordpress.org/news/2014/05/wordpress-3-9-1/''>WordPress 3.9.1 Maintenance Release</a> <span class="rss-date">May 8, 2014</span><div class="rssSummary">After three weeks and more than 9 million downloads of WordPress 3.9, we’re pleased to announce that WordPress 3.9.1 is now available. This maintenance release fixes 34 bugs in 3.9, including numerous fixes for multisite networks, customizing widgets while previewing themes, and the updated visual editor. We’ve also made some improvements to the new audio/vi</div></li></ul></div><div class="rss-widget"><ul><li><a class=''rsswidget'' href=''http://wptavern.com/give-visitors-with-an-fcc-ip-address-the-slow-lane-treatment?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=give-visitors-with-an-fcc-ip-address-the-slow-lane-treatment'' title=''The FCC isn’t making a lot of friends these days in large part due to its position with Net Neutrality. If you want to get back at the FCC, consider using the FCC Slow Lane plugin. The plugin allows users to protest the FCC by slowing down their websites to a crawl when an IP address registered to the FCC is detected. FCC Slow Lane is developed by WordPress.''>WPTavern: Give Visitors With An FCC IP Address The Slow Lane Treatment</a></li><li><a class=''rsswidget'' href=''http://wptavern.com/wordcamp-central-proposes-centralizing-post-wordcamp-surveys?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=wordcamp-central-proposes-centralizing-post-wordcamp-surveys'' title=''After attending a WordCamp, you’ll sometimes receive an email with a survey asking for your thoughts on how it went. The survey gives you an opportunity to rate and provide feedback on individual speakers as well as other aspects of the event. However, not all WordCamps send out surveys. Proposed Survey Questions Andrea Middleton has proposed that there be o''>WPTavern: WordCamp Central Proposes Centralizing Post WordCamp Surveys</a></li><li><a class=''rsswidget'' href=''http://wptavern.com/jetpack-3-0-released-adds-bulk-module-management-site-verification-and-twitter-open-graph-support?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=jetpack-3-0-released-adds-bulk-module-management-site-verification-and-twitter-open-graph-support'' title=''Jetpack 3.0 was released today with a couple of brand new features and an updated interface for managing modules and settings. The new administrative user interface allows for bulk activation and deactivation of modules in the same way you might manage plugins. The redesigned Jetpack admin greeting page now features its 33 modules and allows you to sort the''>WPTavern: Jetpack 3.0 Released, Adds Bulk Module Management, Site Verification and Twitter Open Graph Support</a></li></ul></div><div class="rss-widget"><ul><li class=''dashboard-news-plugin''><span>Popular Plugin:</span> <a href=''http://wordpress.org/plugins/captcha/'' class=''dashboard-news-plugin-link''>Captcha</a>&nbsp;<span>(<a href=''plugin-install.php?tab=plugin-information&amp;plugin=captcha&amp;_wpnonce=f3d21cb48f&amp;TB_iframe=true&amp;width=600&amp;height=800'' class=''thickbox'' title=''Captcha''>Install</a>)</span></li></ul></div>', 'no'),
-(457, '_site_transient_timeout_theme_roots', '1400660564', 'yes'),
-(458, '_site_transient_theme_roots', 'a:4:{s:14:"twentyfourteen";s:7:"/themes";s:14:"twentythirteen";s:7:"/themes";s:12:"twentytwelve";s:7:"/themes";s:6:"wizard";s:7:"/themes";}', 'yes'),
-(462, '_transient_is_multi_author', '0', 'yes'),
-(463, '_transient_wizard_categories', '1', 'yes');
+(466, '_transient_is_multi_author', '0', 'yes'),
+(467, '_transient_wizard_categories', '1', 'yes'),
+(475, '_site_transient_timeout_theme_roots', '1400743678', 'yes'),
+(476, '_site_transient_theme_roots', 'a:4:{s:14:"twentyfourteen";s:7:"/themes";s:14:"twentythirteen";s:7:"/themes";s:12:"twentytwelve";s:7:"/themes";s:6:"wizard";s:7:"/themes";}', 'yes');
 
 -- --------------------------------------------------------
 
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `wp_postmeta` (
   PRIMARY KEY (`meta_id`),
   KEY `post_id` (`post_id`),
   KEY `meta_key` (`meta_key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=292 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=291 ;
 
 --
 -- Dumping data for table `wp_postmeta`
@@ -315,7 +315,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (26, 11, '_edit_last', '1'),
 (27, 11, '_edit_lock', '1400654707:1'),
 (28, 13, '_edit_last', '1'),
-(29, 13, '_edit_lock', '1400658770:1'),
+(29, 13, '_edit_lock', '1400682327:1'),
 (30, 15, '_edit_last', '1'),
 (31, 15, '_edit_lock', '1399907309:1'),
 (32, 17, '_edit_last', '1'),
@@ -419,7 +419,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (260, 125, '_menu_item_target', ''),
 (261, 125, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
 (262, 125, '_menu_item_xfn', ''),
-(263, 125, '_menu_item_url', 'http://wizard.technology/#services'),
+(263, 125, '_menu_item_url', 'http://wizard.technology/#wizard-technology-services'),
 (265, 126, '_menu_item_type', 'custom'),
 (266, 126, '_menu_item_menu_item_parent', '0'),
 (267, 126, '_menu_item_object_id', '126'),
@@ -427,7 +427,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (269, 126, '_menu_item_target', ''),
 (270, 126, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
 (271, 126, '_menu_item_xfn', ''),
-(272, 126, '_menu_item_url', 'http://wizard.technology/#work'),
+(272, 126, '_menu_item_url', 'http://wizard.technology/#wizard-technology-work'),
 (274, 127, '_menu_item_type', 'custom'),
 (275, 127, '_menu_item_menu_item_parent', '0'),
 (276, 127, '_menu_item_object_id', '127'),
@@ -435,7 +435,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (278, 127, '_menu_item_target', ''),
 (279, 127, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
 (280, 127, '_menu_item_xfn', ''),
-(281, 127, '_menu_item_url', 'http://wizard.technology/#about'),
+(281, 127, '_menu_item_url', 'http://wizard.technology/#about-wizard-technology'),
 (283, 128, '_menu_item_type', 'custom'),
 (284, 128, '_menu_item_menu_item_parent', '0'),
 (285, 128, '_menu_item_object_id', '128'),
@@ -443,7 +443,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (287, 128, '_menu_item_target', ''),
 (288, 128, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
 (289, 128, '_menu_item_xfn', ''),
-(290, 128, '_menu_item_url', 'http://wizard.technology/#contact');
+(290, 128, '_menu_item_url', 'http://wizard.technology/#contact-wizard-technology');
 
 -- --------------------------------------------------------
 
@@ -480,7 +480,7 @@ CREATE TABLE IF NOT EXISTS `wp_posts` (
   KEY `type_status_date` (`post_type`,`post_status`,`post_date`,`ID`),
   KEY `post_parent` (`post_parent`),
   KEY `post_author` (`post_author`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=129 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=130 ;
 
 --
 -- Dumping data for table `wp_posts`
@@ -498,7 +498,7 @@ INSERT INTO `wp_posts` (`ID`, `post_author`, `post_date`, `post_date_gmt`, `post
 (10, 1, '2014-05-12 15:05:39', '2014-05-12 15:05:39', 'This is an example page. It''s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this:\n\n<blockquote>Hi there! I''m a bike messenger by day, aspiring actor by night, and this is my blog. I live in Los Angeles, have a great dog named Jack, and I like pi&#241;a coladas. (And gettin'' caught in the rain.)</blockquote>\n\n...or something like this:\n\n<blockquote>The XYZ Doohickey Company was founded in 1971, and has been providing quality doohickeys to the public ever since. Located in Gotham City, XYZ employs over 2,000 people and does all kinds of awesome things for the Gotham community.</blockquote>\n\nAs a new WordPress user, you should go to <a href="http://wizard.technology/wp-admin/">your dashboard</a> to delete this page and create new pages for your content. Have fun!', 'Sample Page', '', 'inherit', 'open', 'open', '', '2-revision-v1', '', '', '2014-05-12 15:05:39', '2014-05-12 15:05:39', '', 2, 'http://wizard.technology/2-revision-v1/', 0, 'revision', '', 0),
 (11, 1, '2014-05-12 15:06:09', '2014-05-12 15:06:09', 'Jeremy Summers began developing for the web over 10 years ago, and quickly launching a music streaming website. He decided to formalise his craft by returning to college to complete 4 years of higher education, culminating with a First in BSc (hons) Applied Computing, with an official letter of commendation. During some of this time he interned at <a href="http://www.spicerack.co.uk" title="Spicerack" target="_blank">Spicerack Media Ltd</a>, where he applied some of his skills to real world tasks. Following completion of his degree, Jeremy took a full time position as Head of Technology at Spicerack, where he worked for three more years, developing bespoke online/digital solutions for National and global brands including, Estée Lauder, Philosophy, Sky, Science in Sport, Homebase, and Garnier, as well as managing the internal technology needs of Spicerack, including the building and maintenance of the company website, intranet and servers.\r\n\r\nJeremy recently decided to start Exmoor based <a href="http://wizard.technology">Wizard Technology</a>, allowing him to spend more time working and less time travelling, as well as focusing more heavily on data-driven system development. Jeremy is looking forward to helping new clients increase traffic to their own businesses.\r\n\r\nJeremy has been a competitive cyclist for many years and likes to train and compete in <a href="http://www.cyclingtimetrials.org.uk/" title="CTT" target="_blank">Cycling Time Trials</a>, the perfect balance of technology and determination! In fact, Wizard Technology has plans to build an analytical database for power based training in 2014. \r\n\r\n', 'About', '', 'private', 'open', 'closed', '', 'about', '', '', '2014-05-21 06:47:29', '2014-05-21 06:47:29', '', 0, 'http://wizard.technology/?page_id=11', 3, 'page', '', 0),
 (12, 1, '2014-05-12 15:06:09', '2014-05-12 15:06:09', '', 'About Me', '', 'inherit', 'open', 'open', '', '11-revision-v1', '', '', '2014-05-12 15:06:09', '2014-05-12 15:06:09', '', 11, 'http://wizard.technology/11-revision-v1/', 0, 'revision', '', 0),
-(13, 1, '2014-05-12 15:06:22', '2014-05-12 15:06:22', '<div class="col-1-2 contact-form">[contact-form-7 id="112" title="Contact form 1"]</div>\r\n<address class="col-1-2"><a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n+44 (0) 7833 922874\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'private', 'open', 'closed', '', 'contact', '', '', '2014-05-21 07:43:21', '2014-05-21 07:43:21', '', 0, 'http://wizard.technology/?page_id=13', 4, 'page', '', 0),
+(13, 1, '2014-05-12 15:06:22', '2014-05-12 15:06:22', '<div class="col-1-2 contact-form">[contact-form-7 id="112" title="Contact form 1"]</div>\r\n<address class="col-1-2"><a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n+44&nbsp;(0)&nbsp;7833&nbsp;922874\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'private', 'open', 'closed', '', 'contact', '', '', '2014-05-21 14:24:20', '2014-05-21 14:24:20', '', 0, 'http://wizard.technology/?page_id=13', 4, 'page', '', 0),
 (14, 1, '2014-05-12 15:06:22', '2014-05-12 15:06:22', '', 'Contact', '', 'inherit', 'open', 'open', '', '13-revision-v1', '', '', '2014-05-12 15:06:22', '2014-05-12 15:06:22', '', 13, 'http://wizard.technology/13-revision-v1/', 0, 'revision', '', 0),
 (15, 1, '2014-05-12 15:06:38', '2014-05-12 15:06:38', '', 'Blog', '', 'publish', 'open', 'closed', '', 'blog', '', '', '2014-05-12 15:08:29', '2014-05-12 15:08:29', '', 0, 'http://wizard.technology/?page_id=15', 5, 'page', '', 0),
 (16, 1, '2014-05-12 15:06:38', '2014-05-12 15:06:38', '', 'Blog', '', 'inherit', 'open', 'open', '', '15-revision-v1', '', '', '2014-05-12 15:06:38', '2014-05-12 15:06:38', '', 15, 'http://wizard.technology/15-revision-v1/', 0, 'revision', '', 0),
@@ -508,7 +508,7 @@ INSERT INTO `wp_posts` (`ID`, `post_author`, `post_date`, `post_date_gmt`, `post
 (21, 1, '2014-05-13 08:06:51', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'open', 'open', '', '', '', '', '2014-05-13 08:06:51', '0000-00-00 00:00:00', '', 0, 'http://wizard.technology/?p=21', 1, 'nav_menu_item', '', 0),
 (27, 1, '2014-05-13 08:09:13', '0000-00-00 00:00:00', '', 'Home', '', 'draft', 'open', 'open', '', '', '', '', '2014-05-13 08:09:13', '0000-00-00 00:00:00', '', 0, 'http://wizard.technology/?p=27', 1, 'nav_menu_item', '', 0),
 (28, 1, '2014-05-13 08:09:13', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'open', 'open', '', '', '', '', '2014-05-13 08:09:13', '0000-00-00 00:00:00', '', 0, 'http://wizard.technology/?p=28', 1, 'nav_menu_item', '', 0),
-(33, 1, '2014-05-13 08:09:48', '2014-05-13 08:09:48', ' ', '', '', 'publish', 'open', 'open', '', '33', '', '', '2014-05-21 08:16:36', '2014-05-21 08:16:36', '', 0, 'http://wizard.technology/?p=33', 5, 'nav_menu_item', '', 0),
+(33, 1, '2014-05-13 08:09:48', '2014-05-13 08:09:48', ' ', '', '', 'publish', 'open', 'open', '', '33', '', '', '2014-05-21 13:26:49', '2014-05-21 13:26:49', '', 0, 'http://wizard.technology/?p=33', 5, 'nav_menu_item', '', 0),
 (34, 1, '2014-05-13 09:46:58', '2014-05-13 09:46:58', '', 'CatlinPICertificateWx111697v12421013', '', 'inherit', 'open', 'open', '', 'catlinpicertificatewx111697v12421013', '', '', '2014-05-13 09:46:58', '2014-05-13 09:46:58', '', 0, 'http://wizard.technology/wp-content/uploads/2014/05/CatlinPICertificateWx111697v12421013.pdf', 0, 'attachment', 'application/pdf', 0),
 (35, 1, '2014-05-13 11:40:10', '2014-05-13 11:40:10', '', 'ss-logo', '', 'inherit', 'open', 'open', '', 'ss-logo', '', '', '2014-05-13 11:40:10', '2014-05-13 11:40:10', '', 0, 'http://wizard.technology/wp-content/uploads/2014/05/ss-logo.png', 0, 'attachment', 'image/png', 0),
 (37, 1, '2014-05-13 13:57:49', '2014-05-13 13:57:49', '', 'bg', '', 'inherit', 'open', 'open', '', 'bg', '', '', '2014-05-13 13:57:49', '2014-05-13 13:57:49', '', 0, 'http://wizard.technology/wp-content/uploads/2014/05/bg.png', 0, 'attachment', 'image/png', 0),
@@ -585,10 +585,11 @@ INSERT INTO `wp_posts` (`ID`, `post_author`, `post_date`, `post_date_gmt`, `post
 (122, 1, '2014-05-21 07:26:09', '2014-05-21 07:26:09', '<div class="col-1-2">\r\n[contact-form-7 id="112" title="Contact form 1"]\r\n</div>\r\n<address class="col-1-2">\r\n<a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n<span>+44 (0) 7833 922874</span>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'inherit', 'open', 'open', '', '13-revision-v1', '', '', '2014-05-21 07:26:09', '2014-05-21 07:26:09', '', 13, 'http://wizard.technology/13-revision-v1/', 0, 'revision', '', 0),
 (123, 1, '2014-05-21 07:26:22', '2014-05-21 07:26:22', '<div class="col-1-2">[contact-form-7 id="112" title="Contact form 1"]</div>\r\n<address class="col-1-2"><a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n+44 (0) 7833 922874\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'inherit', 'open', 'open', '', '13-revision-v1', '', '', '2014-05-21 07:26:22', '2014-05-21 07:26:22', '', 13, 'http://wizard.technology/13-revision-v1/', 0, 'revision', '', 0),
 (124, 1, '2014-05-21 07:42:21', '2014-05-21 07:42:21', '<div class="col-1-2 contact-form">[contact-form-7 id="112" title="Contact form 1"]</div>\r\n<address class="col-1-2"><a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n+44 (0) 7833 922874\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'inherit', 'open', 'open', '', '13-revision-v1', '', '', '2014-05-21 07:42:21', '2014-05-21 07:42:21', '', 13, 'http://wizard.technology/13-revision-v1/', 0, 'revision', '', 0),
-(125, 1, '2014-05-21 08:09:47', '2014-05-21 08:09:47', '', 'Services', '', 'publish', 'open', 'open', '', 'services', '', '', '2014-05-21 08:16:36', '2014-05-21 08:16:36', '', 0, 'http://wizard.technology/?p=125', 1, 'nav_menu_item', '', 0),
-(126, 1, '2014-05-21 08:13:18', '2014-05-21 08:13:18', '', 'Work', '', 'publish', 'open', 'open', '', 'work', '', '', '2014-05-21 08:16:36', '2014-05-21 08:16:36', '', 0, 'http://wizard.technology/?p=126', 2, 'nav_menu_item', '', 0),
-(127, 1, '2014-05-21 08:13:19', '2014-05-21 08:13:19', '', 'About', '', 'publish', 'open', 'open', '', 'about', '', '', '2014-05-21 08:16:36', '2014-05-21 08:16:36', '', 0, 'http://wizard.technology/?p=127', 3, 'nav_menu_item', '', 0),
-(128, 1, '2014-05-21 08:14:09', '2014-05-21 08:14:09', '', 'Contact', '', 'publish', 'open', 'open', '', 'contact', '', '', '2014-05-21 08:16:36', '2014-05-21 08:16:36', '', 0, 'http://wizard.technology/?p=128', 4, 'nav_menu_item', '', 0);
+(125, 1, '2014-05-21 08:09:47', '2014-05-21 08:09:47', '', 'Services', '', 'publish', 'open', 'open', '', 'services', '', '', '2014-05-21 13:26:49', '2014-05-21 13:26:49', '', 0, 'http://wizard.technology/?p=125', 1, 'nav_menu_item', '', 0),
+(126, 1, '2014-05-21 08:13:18', '2014-05-21 08:13:18', '', 'Work', '', 'publish', 'open', 'open', '', 'work', '', '', '2014-05-21 13:26:49', '2014-05-21 13:26:49', '', 0, 'http://wizard.technology/?p=126', 2, 'nav_menu_item', '', 0),
+(127, 1, '2014-05-21 08:13:19', '2014-05-21 08:13:19', '', 'About', '', 'publish', 'open', 'open', '', 'about', '', '', '2014-05-21 13:26:49', '2014-05-21 13:26:49', '', 0, 'http://wizard.technology/?p=127', 3, 'nav_menu_item', '', 0),
+(128, 1, '2014-05-21 08:14:09', '2014-05-21 08:14:09', '', 'Contact', '', 'publish', 'open', 'open', '', 'contact', '', '', '2014-05-21 13:26:49', '2014-05-21 13:26:49', '', 0, 'http://wizard.technology/?p=128', 4, 'nav_menu_item', '', 0),
+(129, 1, '2014-05-21 14:24:20', '2014-05-21 14:24:20', '<div class="col-1-2 contact-form">[contact-form-7 id="112" title="Contact form 1"]</div>\r\n<address class="col-1-2"><a href="mailto:info@wizard.technology">info@wizard.technology</a>\r\n+44&nbsp;(0)&nbsp;7833&nbsp;922874\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-linkedin.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-twitter.png" alt="Follow me on Twitter" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-skype.png" alt="Follow me on Linked In" /></a></div>\r\n<div class="sm-icon"><a href="#"><img src="[blogurl]website-images/32-github.png" alt="Follow me on GitHub" /></a></div>\r\n</address>', 'Contact', '', 'inherit', 'open', 'open', '', '13-revision-v1', '', '', '2014-05-21 14:24:20', '2014-05-21 14:24:20', '', 13, 'http://wizard.technology/13-revision-v1/', 0, 'revision', '', 0);
 
 -- --------------------------------------------------------
 
@@ -604,7 +605,7 @@ CREATE TABLE IF NOT EXISTS `wp_terms` (
   PRIMARY KEY (`term_id`),
   UNIQUE KEY `slug` (`slug`),
   KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `wp_terms`
@@ -656,7 +657,7 @@ CREATE TABLE IF NOT EXISTS `wp_term_taxonomy` (
   PRIMARY KEY (`term_taxonomy_id`),
   UNIQUE KEY `term_id_taxonomy` (`term_id`,`taxonomy`),
   KEY `taxonomy` (`taxonomy`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `wp_term_taxonomy`
