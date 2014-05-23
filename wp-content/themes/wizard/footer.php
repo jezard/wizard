@@ -7,10 +7,21 @@
  * @package wizard
  */
 ?>
+<?php
+	wp_reset_query();
+	if(is_front_page())
+	{
+		$offset_bottom = ' offset-bottom';
+	}
+	else
+	{
+		$offset_bottom = '';
+	}
+?>
 
 	</div><!-- #content -->
 
-	<footer id="colophon" class="site-footer" role="contentinfo">
+	<footer id="colophon" class="site-footer<?php echo $offset_bottom; ?>" role="contentinfo">
 		<div class="site-info grid grid-pad">
 		
 			<div class="subfooter col-9-12"><?php bloginfo( 'description' ); ?></div>
