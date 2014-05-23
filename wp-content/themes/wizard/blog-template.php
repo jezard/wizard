@@ -75,7 +75,7 @@ get_header(); ?>
 							<div class="grid grid-pad">
 								<section class="post-excerpt">
 									<div class="col-2-3">
-										<h1><?php the_title(); ?></h1>
+										<nav><h1><a href=" <?php echo get_the_permalink( ); ?> "><?php the_title(); ?></a></h1></nav>
 										<date><?php the_date(); ?></date> 
 										<?php the_excerpt(); ?>
 										<nav><a href=" <?php echo get_the_permalink( ); ?> ">Read More</a></nav>
