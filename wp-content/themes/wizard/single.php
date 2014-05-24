@@ -21,7 +21,7 @@ get_header(); ?>
 
 		<article class="wizard-single">
 			<div class="grid grid-pad entry-content">
-				<div class="entry-meta">
+				<div class="entry-meta col-1-1">
 					<span class="posted-on">Posted on <time><?php echo get_the_date(); ?></time></a></span><span class="byline"> by <span class="author vcard"><?php the_author_posts_link(); ?></span></span>		
 				</div>
 				<div class="col-1-1">
@@ -43,12 +43,13 @@ get_header(); ?>
 								comments_template();
 							endif;
 						?>
+						<?php endwhile; // end of the loop. ?>
 				</div>
 			</div>
 		</div>
 
 
-		<?php endwhile; // end of the loop. ?>
+		
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
