@@ -1,7 +1,7 @@
 jQuery('.services-col').bind('mouseenter', function(){
 	jQuery(this).children('.service-icon').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
 });
-jQuery('#post-nav').bind('click', function(){
+jQuery('.nav-tab').bind('click', function(){
 
 	$offset = parseInt(jQuery('#post-nav').css("right"));
 

@@ -16,8 +16,8 @@ get_header(); ?>
 
 			<?php if ( have_posts() ) : ?>
 
-				<header class="page-header">
-					<h1 class="page-title">
+				<header class="page-header archive-header">
+					<h1 class="entry-title">
 						<?php
 							if ( is_category() ) :
 								single_cat_title();
@@ -79,18 +79,46 @@ get_header(); ?>
 					?>
 				</header><!-- .page-header -->
 
-				<?php /* Start the Loop */ ?>
-				<?php while ( have_posts() ) : the_post(); ?>
+				<?php 
+					$counter = 0;
+					$trans_bg_class = "";
+				?>
+			</div>
 
-					<?php
-						/* Include the Post-Format-specific template for the content.
-						 * If you want to override this in a child theme, then include a file
-						 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-						 */
-						get_template_part( 'content', get_post_format() );
-					?>
+
+				<?php while ( have_posts() ) : the_post(); ?>
+				<?php
+					$counter++;
+					if($counter %2 == 1)
+					{
+						$trans_bg_class = " trans-bg";
+					}
+					else
+					{
+						$trans_bg_class = "";
+					}
+				?>
+
+
+				
+				<div class="<?php echo $trans_bg_class; ?>">
+					<div class="grid grid-pad">
+						<section class="post-excerpt">
+							<div class="col-2-3">
+								<nav><h1><a href=" <?php echo get_the_permalink( ); ?> "><?php the_title(); ?></a></h1></nav>
+								<date><?php the_date(); ?></date> 
+								<?php the_excerpt(); ?>
+								<nav><a href=" <?php echo get_the_permalink( ); ?> ">Read More</a></nav>
+							</div>
+							<div class="col-1-3">
+								<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+							</div>
+						</section>
+					</div>
+				</div>
 
 				<?php endwhile; ?>
+			<div class="grid grid-pad">
 
 				<?php wizard_paging_nav(); ?>
 
@@ -99,10 +127,13 @@ get_header(); ?>
 				<?php get_template_part( 'content', 'none' ); ?>
 
 			<?php endif; ?>
-			</div>
+		</div>
 
 		</main><!-- #main -->
 	</section><!-- #primary -->
 
-<?php get_sidebar(); ?>
+	<nav id="post-nav">
+		<div class="nav-tab">M<br>O<br>R<br>E</div>
+		<div class="nav-tab-content"><?php get_sidebar(); ?></div>
+	</nav>
 <?php get_footer(); ?>
