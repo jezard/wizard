@@ -16,7 +16,17 @@
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
 
+
 <?php wp_head(); ?>
+<!--[if IE 7]>
+<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-7.css' type='text/css' media='all' />
+<![endif]-->
+<!--[if IE 8]>
+<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-8.css' type='text/css' media='all' />
+<![endif]-->
+<!--[if IE 9]>
+<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-9.css' type='text/css' media='all' />
+<![endif]-->
 <script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/modernizr.custom.11638.js"> </script>
 </head>
 
@@ -43,7 +53,9 @@
 			<div class="site-description col-9-12">
 				<nav id="site-navigation" class="main-navigation" role="navigation">
 					<button class="menu-toggle"><?php _e( 'Primary Menu', 'wizard' ); ?></button>
-					<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'wizard' ); ?></a>
+					<!--[if gt IE 7]>
+						<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'wizard' ); ?></a>
+					<![endif]-->
 					<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
 				</nav><!-- #site-navigation -->
 			</div>

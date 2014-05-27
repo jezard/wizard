@@ -13,7 +13,7 @@ get_header(); ?>
 
 		
 			<!-- inner content section -->
-			<div id="wizard-technology-services" class="anchor"></div>
+			<div data-scroll id="wizard-technology-services" class="anchor"></div>
 			<section id="services" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper.gif';?>); background-position:0 55px">
 				<div class="grid grid-pad">
 				<?php 
@@ -28,13 +28,13 @@ get_header(); ?>
 			</section>
 
 			
-			<div id="wizard-technology-work" class="anchor"></div>
+			<div data-scroll id="wizard-technology-work" class="anchor"></div>
 			<section id="work">
 				<?php include 'portfolio-inner.php'; ?>	
 			</section>
 
 
-			<div id="about-wizard-technology" class="anchor"></div>
+			<div data-scroll id="about-wizard-technology" class="anchor"></div>
 			<section id="about" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/stardust.png';?>);">
 				<div class="grid grid-pad">
 					<div class="col-1-1">
@@ -52,7 +52,7 @@ get_header(); ?>
 			</section>
 
 
-			<div id="contact-wizard-technology" class="anchor"></div>
+			<div data-scroll id="contact-wizard-technology" class="anchor"></div>
 			<section id="contact">
 				<div class="grid grid-pad">
 					<?php
@@ -71,9 +71,9 @@ get_header(); ?>
 			
 		</main><!-- #main -->
 	</div><!-- #primary -->
+	<nav id="post-nav">
+		<div class="nav-tab">M<br>O<br>R<br>E</div>
+		<div class="nav-tab-content"><?php get_sidebar(); ?></div>
+	</nav>
 	
 <?php get_footer(); ?>
-<script type="text/javascript">
-
-
-</script>

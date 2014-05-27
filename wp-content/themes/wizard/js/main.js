@@ -1,5 +1,5 @@
 jQuery('.services-col').bind('mouseenter', function(){
-	jQuery(this).children('.service-icon').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
+	jQuery(this).find('.service-icon a img').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
 });
 jQuery('.nav-tab').bind('click', function(){
 

@@ -1,0 +1,14 @@
+
+.site-title{
+	width:auto!important;
+}
+[class*='col']{
+	padding-right: 0;
+}
+.skip-link, .screen-reader-text{
+	display:none;
+}
+#post-nav{
+	margin-right:-20px;
+	background-color: gray;
+}
