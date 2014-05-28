@@ -81,7 +81,9 @@ get_header(); ?>
 										<nav><a href=" <?php echo get_the_permalink( ); ?> ">Read More</a></nav>
 									</div>
 									<div class="col-1-3">
-										<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+										<div class="blog-thumb-container bounce">
+											<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+										</div>	
 									</div>
 								</section>
 							</div>

@@ -1,6 +1,13 @@
 jQuery('.services-col').bind('mouseenter', function(){
 	jQuery(this).find('.icon-inner').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
 });
+
+jQuery('.portfolio-thumb').on('mouseenter mouseleave',function( e ) {
+  var el = $(this);
+  if(!el.data("b"))el.effect("bounce", {times:1, distance:5}, 500);
+  el.data("b",e.type=="mouseenter"?true:false);
+});
+
 jQuery('.nav-tab').bind('click', function(){
 
 	$offset = parseInt(jQuery('#post-nav').css("right"));
@@ -14,3 +21,4 @@ jQuery('.nav-tab').bind('click', function(){
 		jQuery('.nav-tab').html('M<br>O<br>R<br>E');
 	});
 });
+
