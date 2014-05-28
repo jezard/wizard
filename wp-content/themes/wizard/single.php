@@ -29,11 +29,23 @@ get_header(); ?>
 							the_content();  
 						?>
 
+						<!-- AddThis Button BEGIN -->
+						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+						<a class="addthis_button_facebook"></a>
+						<a class="addthis_button_twitter"></a>
+						<a class="addthis_button_google_plusone_share"></a>
+						<a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
+						</div>
+						<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+						<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5384be0d1cdde2f0"></script>
+						<!-- AddThis Button END -->
+
 						<?php wizard_post_nav(); ?>
 
 				</div>
 			</div>
 		</div>
+
 		<div class="comments-container">
 			<div class="grid grid-pad wizard-single ">
 				<div class="col-1-1">
@@ -58,4 +70,5 @@ get_header(); ?>
 		<div class="nav-tab">M<br>O<br>R<br>E</div>
 		<div class="nav-tab-content"><?php get_sidebar(); ?></div>
 	</nav>
+
 <?php get_footer(); ?>
