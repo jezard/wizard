@@ -40,9 +40,9 @@ get_header(); ?>
 						<div class="col-2-3">
 							<?php get_template_part( 'content', 'search' ); ?>
 						</div>
-						<div class="col-1-3">
+						<div class="blog-thumb-container bounce">
 							<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
-						</div>
+						</div>	
 					</div>
 				</aside>
 				

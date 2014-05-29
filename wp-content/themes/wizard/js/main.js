@@ -22,3 +22,16 @@ jQuery('.nav-tab').bind('click', function(){
 	});
 });
 
+jQuery('#home-page, #content').bind('click', function(){
+
+	$offset = parseInt(jQuery('#post-nav').css("right"));
+
+	if( $offset < -100)
+	{
+		//
+	} 
+	else
+	jQuery('#post-nav').animate({"right":"-241px"}, function(){
+		jQuery('.nav-tab').html('M<br>O<br>R<br>E');
+	});
+});

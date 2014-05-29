@@ -14,22 +14,28 @@ get_header(); ?>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
+			<div class="grid grid-pad">
+				<div class="col-1-1">
+					<?php while ( have_posts() ) : the_post(); ?>
 
-			<?php while ( have_posts() ) : the_post(); ?>
+						<?php get_template_part( 'content', 'page' ); ?>
 
-				<?php get_template_part( 'content', 'page' ); ?>
+						<?php
+							// If comments are open or we have at least one comment, load up the comment template
+							if ( comments_open() || '0' != get_comments_number() ) :
+								comments_template();
+							endif;
+						?>
 
-				<?php
-					// If comments are open or we have at least one comment, load up the comment template
-					if ( comments_open() || '0' != get_comments_number() ) :
-						comments_template();
-					endif;
-				?>
-
-			<?php endwhile; // end of the loop. ?>
+					<?php endwhile; // end of the loop. ?>
+				</div>
+			</div>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
 
-<?php get_sidebar(); ?>
+		<nav id="post-nav">
+			<div class="nav-tab">M<br>O<br>R<br>E</div>
+			<div class="nav-tab-content"><?php get_sidebar(); ?></div>
+		</nav>
 <?php get_footer(); ?>
