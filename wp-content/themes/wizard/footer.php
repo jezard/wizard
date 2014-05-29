@@ -42,6 +42,23 @@
 <script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/jQuery.js"></script>
 <script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/main.js"></script>
 
+<?php
+	if(is_front_page())
+	{
+		echo "<script>
+		var windowWidth = $(window).width();
+		setScroll(windowWidth);
+
+		jQuery(window).resize(function() {
+			windowWidth = $(window).width();
+			setScroll(windowWidth);
+		});
+
+		</script>";
+	}
+
+?>
+
 
 <script>
 	var _gaq=[['_setAccount','UA-XXXXXXX-1'],['_trackPageview']];

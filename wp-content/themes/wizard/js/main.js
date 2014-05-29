@@ -35,3 +35,14 @@ jQuery('#home-page, #content').bind('click', function(){
 		jQuery('.nav-tab').html('M<br>O<br>R<br>E');
 	});
 });
+
+function setScroll(bWidth){
+	jQuery('a[href*=#]').unbind();
+	if(bWidth > 860)
+	{
+		jQuery('a[href*=#]').on('click', function(event){     
+		    event.preventDefault();
+		    jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+		});
+	}
+}

@@ -56,8 +56,11 @@ get_header(); ?>
 			<div>
 
 		<?php else : ?>
-
-			<?php get_template_part( 'content', 'none' ); ?>
+		<div class="grid grid-pad">
+			<div class="col-1-1">
+				<?php get_template_part( 'content', 'none' ); ?>
+			</div>
+		</dir>
 
 		<?php endif; ?>
 
