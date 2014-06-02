@@ -41,7 +41,7 @@ get_header(); ?>
 							<?php get_template_part( 'content', 'search' ); ?>
 						</div>
 						<div class="blog-thumb-container bounce">
-							<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+							<nav class="project-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
 						</div>	
 					</div>
 				</aside>

@@ -1,7 +1,9 @@
+/*bounce for the service items*/
 jQuery('.services-col').bind('mouseenter', function(){
 	jQuery(this).find('.icon-inner').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
 });
 
+/*and for the portfolio thumb bounce too*/
 jQuery('.portfolio-thumb').on('mouseenter mouseleave',function( e ) {
   var el = $(this);
   if(!el.data("b"))el.effect("bounce", {times:1, distance:5}, 500);
@@ -22,6 +24,7 @@ jQuery('.nav-tab').bind('click', function(){
 	});
 });
 
+/*tab to show the extra content - search, category filters, and month filter */
 jQuery('#home-page, #content').bind('click', function(){
 
 	$offset = parseInt(jQuery('#post-nav').css("right"));
@@ -36,10 +39,13 @@ jQuery('#home-page, #content').bind('click', function(){
 	});
 });
 
+/*function to reset the mobile/desktop menu and scroll to anchor functions - scroll to anchor is not implemented on devices which use the compact menu*/
 function setScroll(bWidth){
+	/*unbind first*/
 	jQuery('a[href*=#]').unbind();
 	if(bWidth > 860)
 	{
+		/*then rebind scroll to anchor for larger devices*/
 		jQuery('a[href*=#]').on('click', function(event){     
 		    event.preventDefault();
 		    jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
