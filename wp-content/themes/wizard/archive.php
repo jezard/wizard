@@ -110,8 +110,10 @@ get_header(); ?>
 								<?php the_excerpt(); ?>
 								<nav><a href=" <?php echo get_the_permalink( ); ?> ">Read More</a></nav>
 							</div>
-							<div class="blog-thumb-container bounce">
-								<nav class="project-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+							<div class="col-1-3">
+								<div class="blog-thumb-container bounce">
+									<nav class="project-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'post-thumb', array('class' => 'grayscale blog-thumb'))?></a></span></nav>
+								</div>	
 							</div>	
 						</section>
 					</div>
