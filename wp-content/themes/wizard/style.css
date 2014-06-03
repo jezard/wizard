@@ -199,6 +199,12 @@ small {
 big {
 	font-size: 125%;
 }
+::selection {
+	background: #00D1FD; /* Safari */
+	}
+::-moz-selection {
+	background: #00D1FD; /* Firefox */
+}
 
 /*--------------------------------------------------------------
 3.0 Elements
@@ -1009,8 +1015,8 @@ img.grayed:hover, .project-thumb img:hover{
 
 }
 .eop p{
-	font-style: italic;
-	font-size: 0.9em;
+	font-size: 1.3em;
+	font-weight: 300;
 }
 
 /*about*/
@@ -1064,6 +1070,9 @@ img.me{
 	font-size: 30px;
 	font-weight: 300;
 	line-height: 38px;
+}
+.addthis_default_style{
+	margin-top:50px;
 }
 
 #newer-posts{
@@ -1169,11 +1178,14 @@ post-excerpt a{
 .wizard-single th, 
 .wizard-single dl, 
 .wizard-single span, 
-.wizard-single a, 
+/*.wizard-single a, */
 .wizard-single footer, 
 .wizard-single figcaption{
 	font-size: 24px;
 	font-weight:300;
+}
+.wizard-single a{
+	font-weight: 400;
 }
 .wizard-single .entry-content h1, .wizard-single .entry-content h2, .wizard-single .entry-content h3{
 	font-size: 42px;

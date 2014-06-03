@@ -46,9 +46,14 @@ function setScroll(bWidth){
 	if(bWidth > 860)
 	{
 		/*then rebind scroll to anchor for larger devices*/
-		jQuery('a[href*=#]').on('click', function(event){     
-		    event.preventDefault();
-		    jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+		jQuery('a[href*=#]').on('click', function(event){
+			//excludeproject nav
+			var bid = event.target.id; 
+			if(!(bid == 'pp' || bid == 'np')) 
+			{
+				event.preventDefault();
+		    	jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+			}   
 		});
 	}
 }

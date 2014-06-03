@@ -57,11 +57,11 @@
 						$loaded_page = intval($paged);
 					?>
 					<?php if ( $the_last_page == $loaded_page) { ?> 
-						<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav>
+						<nav id="newer-projects" title="Newer Projects">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-work">Newer Projects</a></nav>
 					<?php } elseif ($loaded_page == 1) { ?> 
-						<nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
+						<nav id="older-projects" title="Older Projects"><a id="np" href="<?php next_posts(); ?>#wizard-technology-work">Older Projects</a> &raquo;</nav> 
 					<?php } else { ?> 
-						<nav id="newer-projects" title="Newer Projects">&laquo; <a href="<?php previous_posts(); ?>#projects-page">Newer Projects</a></nav> <nav id="older-projects" title="Older Projects"><a href="<?php next_posts(); ?>#projects-page">Older Projects</a> &raquo;</nav> 
+						<nav id="newer-projects" title="Newer Projects">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-work">Newer Projects</a></nav> <nav id="older-projects" title="Older Projects"><a id="np" href="<?php next_posts(); ?>#wizard-technology-work">Older Projects</a> &raquo;</nav> 
 					<?php } ?>
 
 					<?php endif; ?>
