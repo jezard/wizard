@@ -4,7 +4,7 @@ jQuery('.services-col').bind('mouseenter', function(){
 });
 
 /*and for the portfolio thumb bounce too*/
-jQuery('.portfolio-thumb').on('mouseenter mouseleave',function( e ) {
+jQuery('.portfolio-thumb').find('.grayscale').on('mouseenter mouseleave',function( e ) {
   var el = $(this);
   if(!el.data("b"))el.effect("bounce", {times:1, distance:5}, 500);
   el.data("b",e.type=="mouseenter"?true:false);
