@@ -33,7 +33,7 @@
 <?php
 	if(is_front_page())
 	{
-		$home_header_class = ' fixed-header';
+		$home_header_class = ' fixed-header home-header';
 		$offset_top = ' offset-top';
 		/*$offset_bottom = ' offset-bottom';*/
 	}
