@@ -8,17 +8,17 @@ get_header(); ?>
 	
 	
 	<div id="home-page" class="content-area" >
-		<div id="bg-grad-top" class="content-area" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper-grad.gif';?>)"></div>
+		<div id="bg-grad-top" class="content-area"></div>
 		<main class="site-main" role="main">
 
 		
 			<!-- inner content section -->
 			<div data-scroll id="wizard-technology-services" class="anchor"></div>
-			<section id="services" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/graph-paper.gif';?>); background-position:0 55px">
+			<section id="services">
 				<div class="grid grid-pad">
 				<?php 
 					$page_title = 'Services';
-					echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
+					echo '<header class="entry-header col-1-1"><h1 class="entry-title services-title">'.$page_title.'</h1></header>';
 					echo '<div class="section-break"></div>';
 					$page = get_page_by_title( $page_title );
 					$content = apply_filters('the_content', $page->post_content); 
@@ -35,12 +35,12 @@ get_header(); ?>
 
 
 			<div data-scroll id="about-wizard-technology" class="anchor"></div>
-			<section id="about" style="background: url(<?php echo do_shortcode('[blogurl]').'website-images/stardust.png';?>);">
+			<section id="about">
 				<div class="grid grid-pad">
 					<div class="col-1-1">
 					<?php
 						$page_title = 'About';
-						echo '<header class="entry-header"><h1 class="entry-title lightest-text">'.$page_title.'</h1></header>';
+						echo '<header class="entry-header  col-1-1"><h1 class="entry-title lightest-text">'.$page_title.'</h1></header>';
 						echo '<div class="section-break"></div>';
 						$page = get_page_by_title( $page_title );
 						$content = apply_filters('the_content', $page->post_content); 
@@ -57,7 +57,7 @@ get_header(); ?>
 				<div class="grid grid-pad">
 					<?php
 						$page_title = 'Contact';
-						echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
+						echo '<header class="entry-header"><h1 class="entry-title  col-1-1">'.$page_title.'</h1></header>';
 						echo '<div class="section-break"></div>';
 						$page = get_page_by_title( $page_title );
 						$content = apply_filters('the_content', $page->post_content); 

@@ -1,4 +1,4 @@
-<div id="projects-page" class="content-area" style="background: url(<?php echo get_bloginfo('url') .'/website-images/canvas-bg.gif';?>); background-position:0 55px">
+<div id="projects-page" class="content-area">
 	<main class="site-main" role="main">
 	
 		<!-- inner content section -->

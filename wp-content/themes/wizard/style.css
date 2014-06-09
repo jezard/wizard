@@ -902,7 +902,15 @@ h1.lightest-text{
 
 
 /*services*/
-
+#services{
+	background: url(http://wizard.technology/website-images/graph-paper.gif) #EBF1F4 0 55px;
+}
+#bg-grad-top{
+	background: url(http://wizard.technology/website-images/graph-paper-grad.gif) #EBF1F4;
+}
+.services-title{
+	margin-bottom:10px;
+}
 
 .section-break{
 	height:30px;
@@ -957,6 +965,9 @@ ul.services-copy{
 	box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.63);
 }
 /*projects*/
+#projects-page{
+	background: url(http://wizard.technology/website-images/canvas-bg.gif) #DED9D3;
+}
 .portfolio-thumb img, .project-thumb img{
 	display: block;
 	margin: 0 auto;
@@ -1020,6 +1031,9 @@ img.grayed:hover, .project-thumb img:hover{
 }
 
 /*about*/
+#about{
+	background: url(http://wizard.technology/website-images/stardust.png) #444649;
+}
 #about p{
 	font-size: 1.7em;
 	color:#fff;
@@ -1298,6 +1312,12 @@ aside.further-reading{
 	.contact-form input[type="text"], .contact-form input[type="email"]{
 		width:95%;
 	}
+	#services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title, .wizard-single .entry-title, .search-header .entry-title, .archive-header .entry-title{
+		margin-left: 0;
+	}
+	.tagline{
+		display:none;
+	}
 
 }
 
@@ -1314,7 +1334,7 @@ aside.further-reading{
 	.fixed-header{
 		position:relative;
 		width:100%;
-		z-index: -1;
+		z-index: auto;
 		top:0;
 	}
 	.offset-top{
@@ -1339,10 +1359,34 @@ aside.further-reading{
 }
 
 
+
 @media (max-width: 479px){
 	h1.entry-title{
 		font-size: 48px;
 		padding-top: 20px;
+		font-weight: 300
 	}
+	.services-col h1{
+		font-weight: 300
+	}
+	#services{
+		background: none #EBF1F4 0 55px;
+	}
+	#bg-grad-top{
+		background: none #EBF1F4;
+	}
+
+	#about{
+		background: none #444649;
+	}
+	#projects-page{
+		background: none #DED9D3;
+	}
+	.site-header{
+		-webkit-box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.63);
+		-moz-box-shadow:  inset 0 -10px 10px -10px  rgba(0,0,0,0.63);
+		box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.63);
+	}
+
 }
 

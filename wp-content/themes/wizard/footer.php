@@ -24,7 +24,7 @@
 	<footer id="colophon" class="site-footer<?php echo $offset_bottom; ?>" role="contentinfo">
 		<div class="site-info grid grid-pad">
 		
-			<div class="subfooter col-9-12"><?php bloginfo( 'description' ); ?></div>
+			<div class="subfooter tagline col-9-12"><?php bloginfo( 'description' ); ?></div>
 			<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer Widgets') ) : ?>
 			<?php endif; ?>
 		
