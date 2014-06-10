@@ -1,15 +1,29 @@
-/*bounce for the service items*/
-jQuery('.services-col').bind('mouseenter', function(){
-	jQuery(this).find('.icon-inner').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
-});
+var deviceAgent = navigator.userAgent.toLowerCase();
 
-/*and for the portfolio thumb bounce too*/
-jQuery('.portfolio-thumb').find('.grayscale').on('mouseenter mouseleave',function( e ) {
-  var el = $(this);
-  if(!el.data("b"))el.effect("bounce", {times:1, distance:5}, 500);
-  el.data("b",e.type=="mouseenter"?true:false);
-});
+var isTouchDevice = Modernizr.touch || 
+(deviceAgent.match(/(iphone|ipod|ipad)/) ||
+deviceAgent.match(/(android)/)  || 
+deviceAgent.match(/(iemobile)/) || 
+deviceAgent.match(/iphone/i) || 
+deviceAgent.match(/ipad/i) || 
+deviceAgent.match(/ipod/i) || 
+deviceAgent.match(/blackberry/i) || 
+deviceAgent.match(/bada/i));
 
+
+if (isTouchDevice) {
+	/*bounce for the service items*/
+	jQuery('.services-col').bind('mouseenter', function(){
+		jQuery(this).find('.icon-inner').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
+	});
+
+	/*and for the portfolio thumb bounce too*/
+	jQuery('.portfolio-thumb').find('.grayscale').on('mouseenter mouseleave',function( e ) {
+	  var el = $(this);
+	  if(!el.data("b"))el.effect("bounce", {times:1, distance:5}, 500);
+	  el.data("b",e.type=="mouseenter"?true:false);
+	});
+}
 jQuery('.nav-tab').bind('click', function(){
 
 	$offset = parseInt(jQuery('#post-nav').css("right"));
