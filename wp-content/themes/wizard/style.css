@@ -1322,6 +1322,9 @@ aside.further-reading{
 		padding-bottom:0;
 	}
 	.offset-bottom{margin-top: 0}
+	small{
+		font-size: 12px;
+	}
 
 }
 
