@@ -10,8 +10,12 @@ deviceAgent.match(/ipod/i) ||
 deviceAgent.match(/blackberry/i) || 
 deviceAgent.match(/bada/i));
 
-
+alert(isTouchDevice);
 if (isTouchDevice) {
+	//sod off
+}
+else
+{
 	/*bounce for the service items*/
 	jQuery('.services-col').bind('mouseenter', function(){
 		jQuery(this).find('.icon-inner').clearQueue().effect("bounce", {times:1, distance:10}, 1000);
@@ -24,19 +28,7 @@ if (isTouchDevice) {
 	  el.data("b",e.type=="mouseenter"?true:false);
 	});
 }
-jQuery('.nav-tab').bind('click', function(){
 
-	$offset = parseInt(jQuery('#post-nav').css("right"));
-
-	if( $offset < -100) 
-	jQuery('#post-nav').animate({"right":"-5px"}, function(){
-		jQuery('.nav-tab').html('L<br>E<br>S<br>S');
-	});
-	else
-	jQuery('#post-nav').animate({"right":"-241px"}, function(){
-		jQuery('.nav-tab').html('M<br>O<br>R<br>E');
-	});
-});
 
 /*tab to show the extra content - search, category filters, and month filter */
 jQuery('#home-page, #content').bind('click', function(){
