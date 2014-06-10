@@ -10,7 +10,6 @@ deviceAgent.match(/ipod/i) ||
 deviceAgent.match(/blackberry/i) || 
 deviceAgent.match(/bada/i));
 
-alert(isTouchDevice);
 if (isTouchDevice) {
 	//sod off
 }
