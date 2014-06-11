@@ -1038,7 +1038,8 @@ img.grayed:hover, .project-thumb img:hover{
 	background: url(http://wizard.technology/website-images/stardust.png) #444649;
 }
 #about p{
-	font-size: 1.7em;
+	/*font-size: 1.7em;*/
+	font-size: 24px;
 	color:#fff;
 	font-weight: 300;
 }
@@ -1334,13 +1335,16 @@ aside.further-reading{
 	.site-header{
 		text-align: center;
 	}
-
+	.services-copy, .services-copy li{
+	 	font-size:17px;
+	}
 }
+
+
 
 @media (max-width: 767px) {
   	p, #newer-projects, #older-projects{
     	font-size: 1.3em;
-
   	}
   	.services-copy{
 		text-align: center;
@@ -1379,6 +1383,9 @@ aside.further-reading{
 	.offset-bottom{margin-top: 0}
 	small{
 		font-size: 12px;
+	}
+	.services-copy, .services-copy li{
+	 	font-size:24px!important;
 	}
 }
 
