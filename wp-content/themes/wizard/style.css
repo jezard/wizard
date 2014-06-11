@@ -895,7 +895,7 @@ h1.lightest-text{
 .clear{
 	clear:both;
 }
-#services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title, .wizard-single .entry-title, .search-header .entry-title, .archive-header .entry-title{
+.all-pages .entry-title, #services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title, .wizard-single .entry-title, .search-header .entry-title, .archive-header .entry-title{
 	text-align:center;
 	margin-left: -20px;
 }
@@ -1010,6 +1010,9 @@ img.grayed:hover, .project-thumb img:hover{
     -webkit-filter: grayscale(0%); /* Chrome 19+ & Safari 6+ */
     -webkit-backface-visibility: hidden; /* Fix for transition flickering */
     -webkit-transition: all 0.5s ease;
+}
+.ui-effects-wrapper{
+	margin:0 auto!important;
 }
 
 
@@ -1163,7 +1166,7 @@ post-excerpt a{
 	padding:30px 5px 30px 5px;
 	text-align: center;
 	cursor:pointer;
-	line-height: 20px;
+	line-height: 22px;
 	display:block;
 	background-color:rgba(64,64,64,0.5);/*grey*/
 	/*background-color:rgba(251,75,2,0.5);*//*orange*/
@@ -1175,17 +1178,32 @@ post-excerpt a{
 }
 .nav-tab-content{
 	width:240px;
-	padding:20px 20px 0 5px;
+	padding:10px 20px 10px 5px;
 	float: left;
-
 }
 .nav-tab-content h1{
 	display: none;
+}
+.nav-tab-content .widget select, #page_id, .nav-tab-content .widget input{
+	font-size:80%;
+	padding:0;
+}
+.nav-tab-content .widget select, #page_id, .nav-tab-content .widget input[type="search"], .nav-tab-content .widget input[type="text"]{
+	width: 140px;
+}
+.nav-tab-content .widget input[type="submit"], #more-pages input[type="submit"]{
+	padding: 3px;
+	margin-top: 4px;
+	display: block;
+	float: right;
+	font-size: 12px;
+	width: 65px;
 }
 .wizard-single h1, .search-header h1, .archive-header h1{
 	padding-bottom: 90px;
 }
 /*reset*/
+.all-pages .entry-content p,
 .wizard-single p, 
 .wizard-single  li, 
 .wizard-single td, 
@@ -1312,7 +1330,7 @@ aside.further-reading{
 	.contact-form input[type="text"], .contact-form input[type="email"]{
 		width:95%;
 	}
-	#services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title, .wizard-single .entry-title, .search-header .entry-title, .archive-header .entry-title{
+	.all-pages .entry-title, #services .entry-title, #work .entry-title, #about .entry-title, #contact .entry-title, .wizard-single .entry-title, .search-header .entry-title, .archive-header .entry-title{
 		margin-left: 0;
 	}
 	.tagline{

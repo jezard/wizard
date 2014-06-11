@@ -73,7 +73,13 @@ get_header(); ?>
 	</div><!-- #primary -->
 	<nav id="post-nav">
 		<div class="nav-tab">M<br>O<br>R<br>E</div>
-		<div class="nav-tab-content"><?php get_sidebar(); ?></div>
+		<div class="nav-tab-content">
+			<?php get_sidebar(); ?>
+			<form id="more-pages" action="<?php bloginfo('url'); ?>" method="get">
+		   		<?php wp_dropdown_pages('exclude='.wizardMenuExclude()); ?>
+		   		<input type="submit" name="submit" value="View page" />
+		   </form>
+		</div>
 	</nav>
 	
 <?php get_footer(); ?>

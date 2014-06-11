@@ -12,7 +12,7 @@
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
+	<div id="primary" class="content-area all-pages">
 		<main id="main" class="site-main" role="main">
 			<div class="grid grid-pad">
 				<div class="col-1-1">
@@ -20,22 +20,33 @@ get_header(); ?>
 
 						<?php get_template_part( 'content', 'page' ); ?>
 
-						<?php
-							// If comments are open or we have at least one comment, load up the comment template
-							if ( comments_open() || '0' != get_comments_number() ) :
-								comments_template();
-							endif;
-						?>
 
 					<?php endwhile; // end of the loop. ?>
+					<!-- AddThis Button BEGIN -->
+						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+						<a class="addthis_button_facebook"></a>
+						<a class="addthis_button_twitter"></a>
+						<a class="addthis_button_google_plusone_share"></a>
+						<a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
+						</div>
+						<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+						<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5384be0d1cdde2f0"></script>
+					<!-- AddThis Button END -->
 				</div>
 			</div>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
 
-		<nav id="post-nav">
-			<div class="nav-tab">M<br>O<br>R<br>E</div>
-			<div class="nav-tab-content"><?php get_sidebar(); ?></div>
-		</nav>
+	<nav id="post-nav">
+		<div class="nav-tab">M<br>O<br>R<br>E</div>
+		<div class="nav-tab-content">
+			<?php get_sidebar(); ?>
+			<form id="more-pages" action="<?php bloginfo('url'); ?>" method="get">
+		   		<?php wp_dropdown_pages('exclude='.wizardMenuExclude()); ?>
+		   		<input type="submit" name="submit" value="View page" />
+		   </form>
+		</div>
+	</nav>
+	
 <?php get_footer(); ?>

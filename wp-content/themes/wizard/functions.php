@@ -195,3 +195,8 @@ if ( function_exists( 'add_image_size' ) ) {
 if ( function_exists( 'add_image_size' ) ) {
 	add_image_size( 'post-thumb', 325, 325, array( 'left', 'top' ) ); // Hard crop left top
 }
+
+function wizardMenuExclude(){
+	//comma seperated list of pages to exclude (check id in html output for clue to id value)
+	return('8');
+}

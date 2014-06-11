@@ -46,7 +46,7 @@ jQuery('.nav-tab').bind('click', function(){
 });
 
 //and hide...
-jQuery('#home-page, #content').bind('click', function(){
+jQuery('#home-page, #main').bind('click', function(){
 
 	$offset = parseInt(jQuery('#post-nav').css("right"));
 
