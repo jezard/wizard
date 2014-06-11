@@ -59,6 +59,10 @@ jQuery('#home-page, #main').bind('click', function(){
 		jQuery('.nav-tab').html('M<br>O<br>R<br>E');
 	});
 });
+jQuery('#page_id').bind('change', function(){
+	jQuery('#more-pages input').click();
+});
+
 
 /*function to reset the mobile/desktop menu and scroll to anchor functions - scroll to anchor is not implemented on devices which use the compact menu*/
 function setScroll(bWidth){
