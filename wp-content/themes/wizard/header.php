@@ -15,6 +15,7 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
 
 <?php wp_head(); ?>
