@@ -1280,6 +1280,9 @@ aside.further-reading{
 .blog-thumb-container{
 	height:373px;
 }
+.post-table td{
+	font-size:1.2em;
+}
 /*footer*/
 .subfooter{
 	/*margin-bottom:50px;*/
