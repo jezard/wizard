@@ -1283,6 +1283,13 @@ aside.further-reading{
 .post-table td{
 	font-size:1.2em;
 }
+.post-table table, .post-table td, .post-table th{
+	border: 1px solid white;
+}
+.post-table{
+	margin:0;
+	border-collapse: collapse;
+}
 /*footer*/
 .subfooter{
 	/*margin-bottom:50px;*/
