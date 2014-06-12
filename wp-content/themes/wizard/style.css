@@ -1280,11 +1280,20 @@ aside.further-reading{
 .blog-thumb-container{
 	height:373px;
 }
-.post-table td{
+.post-table td, .post-table th{
 	font-size:1.2em;
+}
+.post-table td{
+	background-color: rgba(64,64,64,0.5);
+}
+.post-table th{
+	background-color: rgba(251,75,2,0.5);
+	color:#fff;
 }
 .post-table table, .post-table td, .post-table th{
 	border: 1px solid white;
+	color:#fff;
+	padding:5px;
 }
 .post-table{
 	margin:0;
