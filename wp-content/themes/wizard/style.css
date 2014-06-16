@@ -1206,7 +1206,6 @@ post-excerpt a{
 /*reset*/
 .all-pages .entry-content p,
 .wizard-single p, 
-.wizard-single  li, 
 .wizard-single td, 
 .wizard-single th, 
 .wizard-single dl, 
@@ -1217,6 +1216,11 @@ post-excerpt a{
 	font-size: 24px;
 	font-weight:300;
 }
+.all-pages li, .wizard-single li{
+	font-size: 24px;
+	font-weight:300;
+	text-transform: uppercase;
+}
 .wizard-single a{
 	font-weight: 400;
 }
@@ -1226,6 +1230,9 @@ post-excerpt a{
 	font-size: 42px;
 	font-weight: 300;
 	padding-bottom:10px;
+}
+.all-pages .entry-content h3{
+	font-size:32px;
 }
 .wizard-single .entry-meta span, .wizard-single .entry-meta a{
 	font-size:16px;
@@ -1440,6 +1447,9 @@ aside.further-reading{
 		-webkit-box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.63);
 		-moz-box-shadow:  inset 0 -10px 10px -10px  rgba(0,0,0,0.63);
 		box-shadow: inset 0 -10px 10px -10px rgba(0,0,0,0.63);
+	}
+	.post-table td, .post-table th {
+		font-size: 10px;
 	}
 
 }
