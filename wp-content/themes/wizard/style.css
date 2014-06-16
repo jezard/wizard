@@ -1216,21 +1216,20 @@ post-excerpt a{
 	font-size: 24px;
 	font-weight:300;
 }
-.all-pages li, .wizard-single li{
+.wizard-single li{
 	font-size: 18px;
 	font-weight:300;
 }
 .wizard-single a{
 	font-weight: 400;
 }
-.wizard-single .entry-content h1, .wizard-single .entry-content h2, .wizard-single .entry-content h3,
-.all-pages .entry-content h1, .all-pages .entry-content h2, .all-pages .entry-content h3
+.wizard-single .entry-content h1, .wizard-single .entry-content h2, .wizard-single .entry-content h3
 {
 	font-size: 42px;
 	font-weight: 300;
 	padding-bottom:10px;
 }
-.all-pages .entry-content h3{
+.wizard-single .entry-content h3{
 	font-size:32px;
 }
 .wizard-single .entry-meta span, .wizard-single .entry-meta a{
