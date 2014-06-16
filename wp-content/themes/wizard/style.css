@@ -1219,7 +1219,6 @@ post-excerpt a{
 .all-pages li, .wizard-single li{
 	font-size: 18px;
 	font-weight:300;
-	text-transform: uppercase;
 }
 .wizard-single a{
 	font-weight: 400;
