@@ -36,6 +36,50 @@ get_header(); ?>
 			</div>
 
 		</main><!-- #main -->
+
+
+		<main id="main" class="site-main" role="main">
+			<div class="grid grid-pad wizard-single">
+				<div class="col-1-1">
+					<?php while ( have_posts() ) : the_post(); ?>
+					<h1 class="entry-title"><?php the_title(); ?></h1>
+				</div>
+			</div>
+
+
+			<article class="wizard-single">
+				<div class="grid grid-pad entry-content">
+					<div class="entry-meta col-1-1">
+						<span class="posted-on">Posted on <time><?php echo get_the_date(); ?></time></a></span><span class="byline"> by <span class="author vcard"><?php the_author_posts_link(); ?></span></span>		
+					</div>
+					<div class="col-1-1">
+							<?php 
+								the_content();  
+							?>
+
+							<!-- AddThis Button BEGIN -->
+							<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+							<a class="addthis_button_facebook"></a>
+							<a class="addthis_button_twitter"></a>
+							<a class="addthis_button_google_plusone_share"></a>
+							<a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
+							</div>
+							<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+							<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5384be0d1cdde2f0"></script>
+							<!-- AddThis Button END -->
+
+							<?php wizard_post_nav(); ?>
+
+					</div>
+				</div>
+			</article>
+
+		</main><!-- #main -->
+
+
+
+
+
 	</div><!-- #primary -->
 
 	<nav id="post-nav">
