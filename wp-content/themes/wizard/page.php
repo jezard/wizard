@@ -45,13 +45,14 @@ get_header(); ?>
 							<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5384be0d1cdde2f0"></script>
 							<!-- AddThis Button END -->
 
-							<?php wizard_post_nav(); ?>
+
 
 					</div>
 				</div>
 			</article>
 
 		</main><!-- #main -->
+		<?php endwhile; // end of the loop. ?>
 
 
 
