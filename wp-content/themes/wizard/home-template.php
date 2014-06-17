@@ -64,7 +64,6 @@ get_header(); ?>
 						echo $content; 
 						echo '<div class="section-break"></div>';
 					?>
-					</div>
 				</div>
 			</section>
 

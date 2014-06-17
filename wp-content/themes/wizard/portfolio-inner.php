@@ -1,5 +1,5 @@
 <div id="projects-page" class="content-area">
-	<main class="site-main" role="main">
+	<div class="site-main" role="main">
 	
 		<!-- inner content section -->
 		<div class="grid grid-pad">
@@ -48,7 +48,7 @@
 					</aside>
 
 				<?php endwhile; ?>
-				<div id="sub-images"></div>
+				<div class="sub-images"></div>
 				<div class="clear"></div>
 
 				<div class="col-1-1">
@@ -66,7 +66,7 @@
 
 					<?php endif; ?>
 
-					<div id="sub-images"></div>
+					<div class="sub-images"></div>
 					<div class="clear"></div>
 
 					
@@ -86,5 +86,5 @@
 		
 		</div>
 		
-	</main><!-- #main -->
+	</div><!-- #main -->
 </div><!-- #primary -->
