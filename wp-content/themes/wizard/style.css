@@ -1326,7 +1326,15 @@ aside.further-reading{
 .offset-bottom{
 	margin-top:174px;
 }
-/* media queries */
+
+
+.wpcf7-form .wpcf7-list-item{
+	display:block;
+}
+.wpcf7-form p, .wpcf7-form span {
+	font-size:20px;
+}
+/* media queries*/
 @media screen and (max-width: 860px) {
 	.menu-toggle,
 	.main-navigation.toggled .nav-menu {
