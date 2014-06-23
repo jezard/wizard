@@ -1036,6 +1036,7 @@ img.grayed:hover, .project-thumb img:hover{
 /*about*/
 #about{
 	background: url(http://wizard.technology/website-images/stardust.png) #444649;
+	background-attachment:fixed;
 }
 #about p{
 	/*font-size: 1.7em;*/
