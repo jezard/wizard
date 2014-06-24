@@ -1456,6 +1456,9 @@ aside.further-reading{
 		font-size:30px;
 		font-weight:400;
 	}
+	.get-quote{
+		margin:0 auto 50px;
+	}
 	.services-col h1{
 		font-weight: 300
 	}
