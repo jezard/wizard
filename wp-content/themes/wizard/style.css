@@ -1440,6 +1440,10 @@ aside.further-reading{
 	.services-copy, .services-copy li{
 	 	font-size:20px;
 	}
+	.post-excerpt h1 a {
+		font-size: 32px;
+		font-weight: 400;
+	}
 }
 
 
@@ -1455,10 +1459,6 @@ aside.further-reading{
 	.wizard-single .entry-content h2{
 		font-size:30px;
 		font-weight:400;
-	}
-	.post-excerpt h1 a {
-		font-size: 32px;
-		font-weight: 400;
 	}
 	.get-quote{
 		margin:0 auto 50px;
