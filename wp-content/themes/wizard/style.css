@@ -1456,6 +1456,10 @@ aside.further-reading{
 		font-size:30px;
 		font-weight:400;
 	}
+	.post-excerpt h1 a {
+		font-size: 32px;
+		font-weight: 400;
+	}
 	.get-quote{
 		margin:0 auto 50px;
 	}
