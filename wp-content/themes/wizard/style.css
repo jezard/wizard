@@ -1452,7 +1452,7 @@ aside.further-reading{
 		padding-top: 20px;
 		font-weight: 300
 	}
-	.wizard-single h2{
+	.wizard-single .entry-content h2{
 		font-size:30px;
 		font-weight:400;
 	}
