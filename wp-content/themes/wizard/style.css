@@ -1397,7 +1397,7 @@ aside.further-reading{
 
 @media (max-width: 767px) {
   	p, #newer-projects, #older-projects{
-    	font-size: 1.3em;
+    	/*font-size: 1.3em;*/
   	}
   	.services-copy{
 		text-align: center;
