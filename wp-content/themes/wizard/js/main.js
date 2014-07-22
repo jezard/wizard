@@ -78,7 +78,8 @@ function setScroll(bWidth){
 			{
 				event.preventDefault();
 				console.log('should animate', this.hash, jQuery(this.hash).offset().top);
-		    	jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+				var offsetval = jQuery(this.hash).offset().top + 'px';
+		    	jQuery('html,body').animate({scrollTop:offsetval}, 500);
 			}   
 		});
 	}
