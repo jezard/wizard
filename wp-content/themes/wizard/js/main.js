@@ -77,7 +77,7 @@ function setScroll(bWidth){
 			if(!(bid == 'pp' || bid == 'np')) 
 			{
 				event.preventDefault();
-				console.log('should animate');
+				console.log('should animate', this.hash);
 		    	jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
 			}   
 		});
