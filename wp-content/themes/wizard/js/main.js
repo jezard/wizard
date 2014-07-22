@@ -76,8 +76,9 @@ function setScroll(bWidth){
 			var bid = event.target.id; 
 			if(!(bid == 'pp' || bid == 'np')) 
 			{
-				event.preventDefault();
+				//event.preventDefault();
 		    	jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+		    	return false;
 			}   
 		});
 	}
