@@ -76,10 +76,8 @@ function setScroll(bWidth){
 			var bid = event.target.id; 
 			if(!(bid == 'pp' || bid == 'np')) 
 			{
-				event.preventDefault();
-				console.log('should animate', this.hash, jQuery(this.hash).offset().top);
-				var offsetval = jQuery(this.hash).offset().top + 'px';
-		    	jQuery('html,body').animate({scrollTop:offsetval}, 500);
+				//event.preventDefault(); //seems to be a bug in chrome at them moment...
+		    	jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
 			}   
 		});
 	}
