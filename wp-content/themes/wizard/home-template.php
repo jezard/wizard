@@ -28,9 +28,9 @@ get_header(); ?>
 			</section>
 
 			
-			<div data-scroll id="wizard-technology-work" class="anchor"></div>
+			<div data-scroll id="wizard-technology-skills" class="anchor"></div>
 			<section id="work">
-				<?php include 'portfolio-inner.php'; ?>	
+				<?php include 'skills-inner.php'; ?>	
 			</section>
 
 
