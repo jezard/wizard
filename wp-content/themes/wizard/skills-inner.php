@@ -74,7 +74,7 @@
 						//if the last page of the projects portfolio and being shown on homepage...
 						if ( $front_page && $the_last_page == $loaded_page) {
 						    $content = apply_filters('the_content', $pager->post_content);
-						    echo '<hr><aside class="eop">'.$content.'</aside>';
+						    echo '<aside class="eop">'.$content.'</aside>';
 						} 
 					?>
 				</div>
