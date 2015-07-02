@@ -35,7 +35,7 @@
 				?>
 
 
-				<?php $args = array('post_type' => 'projects', 'paged' => $paged, 'posts_per_page' => 3, 'orderby' => 'date', 'order' => 'DESC' ); ?>
+				<?php $args = array('post_type' => 'projects', 'paged' => $paged, 'posts_per_page' => 3); ?>
 
 				<?php $wp_query = null; ?>
 				<?php $wp_query = new WP_Query(); ?>

@@ -35,7 +35,7 @@
 				?>
 
 
-				<?php $args = array('post_type' => 'skills', 'paged' => $paged, 'posts_per_page' => 3); ?>
+				<?php $args = array('post_type' => 'skills', 'paged' => $paged, 'posts_per_page' => 3, 'orderby' => 'date', 'order' => 'ASC' ); ?>
 
 				<?php $wp_query = null; ?>
 				<?php $wp_query = new WP_Query(); ?>
