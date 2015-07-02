@@ -1016,17 +1016,16 @@ img.grayed:hover, .project-thumb img:hover{
 }
 
 
-#newer-projects{
+#newer-projects, #next-skills{
 	float: left;
 }
-#older-projects{
+#older-projects, #previous-skills{
 	float: right;
 	margin-right: 20px;
 }
-#newer-projects, #older-projects{
+#newer-projects, #older-projects, #next-skills, #previous-skills{
 	position: relative;
 	font-size: 1.2em;
-
 }
 .eop p{
 	font-size: 1.3em;

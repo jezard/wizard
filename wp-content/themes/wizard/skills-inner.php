@@ -57,11 +57,11 @@
 						$loaded_page = intval($paged);
 					?>
 					<?php if ( $the_last_page == $loaded_page) { ?> 
-						<nav id="next_skills" title="More Skills">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-skills">More Skills</a></nav>
+						<nav id="next-skills" title="More Skills">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-skills">More Skills</a></nav>
 					<?php } elseif ($loaded_page == 1) { ?> 
-						<nav id="previous_skills" title="More Skills"><a id="np" href="<?php next_posts(); ?>#wizard-technology-skills">More Skills</a> &raquo;</nav> 
+						<nav id="previous-skills" title="More Skills"><a id="np" href="<?php next_posts(); ?>#wizard-technology-skills">More Skills</a> &raquo;</nav> 
 					<?php } else { ?> 
-						<nav id="next_skills" title="More Skills">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-skills">More Skills</a></nav> <nav id="previous_skills" title="More Skills"><a id="np" href="<?php next_posts(); ?>#wizard-technology-skills">More Skills</a> &raquo;</nav> 
+						<nav id="next-skills" title="More Skills">&laquo; <a id="pp" href="<?php previous_posts(); ?>#wizard-technology-skills">More Skills</a></nav> <nav id="previous-skills" title="More Skills"><a id="np" href="<?php next_posts(); ?>#wizard-technology-skills">More Skills</a> &raquo;</nav> 
 					<?php } ?>
 
 					<?php endif; ?>
