@@ -1058,7 +1058,7 @@ img.grayed:hover, .project-thumb img:hover{
 	font-size: 30px;
 	font-weight: bold;
 	width:300px;
-	margin:150px 0 0 100px;
+	margin:10px 0 0 100px;
 }
 .sm-icon{
 	float:left;
@@ -1349,6 +1349,22 @@ aside.further-reading{
 .get-quote:hover, .get-quote:visited{
 	text-decoration: none;
 	color:#fff;
+}
+.footer-nav ul{
+	margin-left: 0;
+}
+.footer-nav li{
+	list-style-type: none;
+	display: inline-block;
+	margin-left: 0;
+	padding-right: 10px;
+}
+.footer-nav li:after{
+	padding-left:10px;
+	content: "|";
+}
+.footer-nav li:last-child:after{
+	content:"";
 }
 
 
