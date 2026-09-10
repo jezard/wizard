@@ -903,10 +903,10 @@ h1.lightest-text{
 
 /*services*/
 #services{
-	background: url(http://wizard.technology/website-images/graph-paper.gif) #EBF1F4 0 55px;
+	background: url(/website-images/graph-paper.gif) #EBF1F4 0 55px;
 }
 #bg-grad-top{
-	background: url(http://wizard.technology/website-images/graph-paper-grad.gif) #EBF1F4;
+	background: url(/website-images/graph-paper-grad.gif) #EBF1F4;
 }
 .services-title{
 	margin-bottom:10px;
@@ -966,7 +966,7 @@ ul.services-copy{
 }
 /*projects*/
 #projects-page{
-	background: url(http://wizard.technology/website-images/canvas-bg.gif) #DED9D3;
+	background: url(/website-images/canvas-bg.gif) #DED9D3;
 }
 .portfolio-thumb img, .project-thumb img{
 	display: block;
@@ -1034,7 +1034,7 @@ img.grayed:hover, .project-thumb img:hover{
 
 /*about*/
 #about{
-	background: url(http://wizard.technology/website-images/stardust.png) #444649;
+	background: url(/website-images/stardust.png) #444649;
 	background-attachment:fixed;
 }
 #about p{

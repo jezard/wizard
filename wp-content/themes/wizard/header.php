@@ -20,15 +20,15 @@
 
 <?php wp_head(); ?>
 <!--[if IE 7]>
-<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-7.css' type='text/css' media='all' />
+<link rel='stylesheet' href='<?php echo get_template_directory_uri(); ?>/ie-7.css' type='text/css' media='all' />
 <![endif]-->
 <!--[if IE 8]>
-<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-8.css' type='text/css' media='all' />
+<link rel='stylesheet' href='<?php echo get_template_directory_uri(); ?>/ie-8.css' type='text/css' media='all' />
 <![endif]-->
 <!--[if IE 9]>
-<link rel='stylesheet' href='http://wizard.technology/wp-content/themes/wizard/ie-9.css' type='text/css' media='all' />
+<link rel='stylesheet' href='<?php echo get_template_directory_uri(); ?>/ie-9.css' type='text/css' media='all' />
 <![endif]-->
-<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/modernizr.custom.11638.js"> </script>
+<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/modernizr.custom.11638.js"> </script>
 <!--Start of Zopim Live Chat Script-->
 <script type="text/javascript">
 window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=

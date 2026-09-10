@@ -40,8 +40,8 @@
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
-<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/jQuery.js"></script>
-<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/main.js"></script>
+<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/jQuery.js"></script>
+<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/main.js"></script>
 
 <?php
 	if(is_front_page())
