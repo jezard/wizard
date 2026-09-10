@@ -256,3 +256,37 @@ function wizard_get_page_by_title( $page_title ) {
 	) );
 	return ! empty( $pages ) ? $pages[0] : null;
 }
+
+/**
+ * Add accessible labels and alt text to the contact form fields.
+ */
+function wizard_contact_form_labels( $form ) {
+	$labels = array(
+		'your-name'    => 'Name (required)',
+		'your-email'   => 'Email (required)',
+		'your-subject' => 'Subject',
+		'your-message' => 'Message',
+	);
+
+	foreach ( $labels as $name => $label ) {
+		$form = preg_replace(
+			'/(<span class="wpcf7-form-control-wrap" data-name="' . $name . '">)(<input[^>]*?)(\/>)/',
+			'$1$2 aria-label="' . $label . '"$3',
+			$form
+		);
+		$form = preg_replace(
+			'/(<span class="wpcf7-form-control-wrap" data-name="' . $name . '">)(<textarea[^>]*?)(>)/',
+			'$1$2 aria-label="' . $label . '"$3',
+			$form
+		);
+	}
+
+	$form = str_replace(
+		'<input id="contact-submit" type="image" name="submit"',
+		'<input id="contact-submit" type="image" name="submit" alt="Send"',
+		$form
+	);
+
+	return $form;
+}
+add_filter( 'wpcf7_form_elements', 'wizard_contact_form_labels' );

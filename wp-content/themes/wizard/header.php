@@ -11,6 +11,7 @@
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Wizard Technology - bespoke online solutions. Web development, web apps, and software built to fit your problem.">
 <title><?php wp_title( '|', true, 'right' ); ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
@@ -29,21 +30,6 @@
 <link rel='stylesheet' href='<?php echo get_template_directory_uri(); ?>/ie-9.css' type='text/css' media='all' />
 <![endif]-->
 <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/modernizr.custom.11638.js"> </script>
-<!--Start of Zopim Live Chat Script-->
-<script type="text/javascript">
-window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
-d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
-_.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
-$.src="//v2.zopim.com/?2v8kubouetnAWy9V2N1e6YrW2CUihNA0";z.t=+new Date;$.
-type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
-
-$zopim(function() {
-    $zopim.livechat.button.setPosition('tr');
-    $zopim.livechat.button.setPositionMobile('bl');
-    $zopim.livechat.button.setColor('#66635e');
-});
-</script>
-<!--End of Zopim Live Chat Script-->
 </head>
 
 <?php
