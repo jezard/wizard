@@ -225,7 +225,7 @@ function sdrn_item_attributes($atts, $item, $args) {
 	$options = get_option('sdrn_options');
 	//check if witch icons should be used ( normal menu or for logged in menu)
 	$icons = ($options['custom_for_logged_in'] == 'yes' && $options['logged_in_menu'] > 0 && is_user_logged_in())? $options['logmenu_icons_for_items'] : $options['icons_for_items'];
-	if(count($icons >0)) {
+	if(count($icons) > 0) {
 		foreach ($icons as $item_set) {
 			if(isset($item_set['item_id']) && isset($item_set['item_icon']) && isset($item_set['color']) && isset($item_set['icon_image'])) {
 				if ($item_set['item_id'] == $item->ID) {

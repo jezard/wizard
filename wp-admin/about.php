@@ -7,274 +7,328 @@
  */
 
 /** WordPress Administration Bootstrap */
-require_once( dirname( __FILE__ ) . '/admin.php' );
+require_once __DIR__ . '/admin.php';
 
-wp_enqueue_style( 'wp-mediaelement' );
-wp_enqueue_script( 'wp-playlist' );
-add_action( 'admin_footer', 'wp_underscore_playlist_templates', 0 );
+// Used in the HTML title tag.
+/* translators: Page title of the About WordPress page in the admin. */
+$title = _x( 'About', 'page title' );
 
-$title = __( 'About' );
+list( $display_version ) = explode( '-', wp_get_wp_version() );
+$display_major_version   = '7.1';
 
-list( $display_version ) = explode( '-', $wp_version );
+$release_notes_url = sprintf(
+	/* translators: %s: WordPress version number. */
+	__( 'https://wordpress.org/documentation/wordpress-version/version-%s/' ),
+	sanitize_title( $display_major_version )
+);
 
-include( ABSPATH . 'wp-admin/admin-header.php' );
+$field_guide_url = sprintf(
+	/* translators: %s: WordPress version number. */
+	__( 'https://make.wordpress.org/core/wordpress-%s-field-guide/' ),
+	sanitize_title( $display_major_version )
+);
+
+$release_page_url = sprintf(
+	/* translators: %s: WordPress version number. */
+	__( 'https://wordpress.org/download/releases/%s/' ),
+	sanitize_title( $display_major_version )
+);
+
+$version_text = sprintf(
+	/* translators: %s: Version number. */
+	__( 'WordPress %s' ),
+	$display_version
+);
+
+require_once ABSPATH . 'wp-admin/admin-header.php';
 ?>
-<!--[if lt IE 9]><script>document.createElement('audio');document.createElement('video');</script><![endif]-->
-<div class="wrap about-wrap">
+	<div class="wrap about__container">
 
-<h1><?php printf( __( 'Welcome to WordPress&nbsp;%s' ), $display_version ); ?></h1>
-
-<div class="about-text"><?php printf( __( 'Thank you for updating! WordPress %s has lots of refinements we think you&#8217;ll love.' ), $display_version ); ?></div>
-
-<div class="wp-badge"><?php printf( __( 'Version %s' ), $display_version ); ?></div>
-
-<h2 class="nav-tab-wrapper">
-	<a href="about.php" class="nav-tab nav-tab-active">
-		<?php _e( 'What&#8217;s New' ); ?>
-	</a><a href="credits.php" class="nav-tab">
-		<?php _e( 'Credits' ); ?>
-	</a><a href="freedoms.php" class="nav-tab">
-		<?php _e( 'Freedoms' ); ?>
-	</a>
-</h2>
-
-<div class="changelog point-releases">
-	<h3><?php echo _n( 'Maintenance Release', 'Maintenance Releases', 1 ); ?></h3>
-	<p><?php printf( _n( '<strong>Version %1$s</strong> addressed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed %2$s bugs.', 34 ), '3.9.1', number_format_i18n( 34 ) ); ?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://codex.wordpress.org/Version_3.9.1' ); ?>
- 	</p>
-</div>
-
-<div class="changelog">
-	<div class="about-overview">
-	<?php
-	if ( ! is_ssl() && ( $locale = get_locale() ) && 'en_' === substr( $locale, 0, 3 ) ) : ?>
-		<embed src="//v0.wordpress.com/player.swf?v=1.03" type="application/x-shockwave-flash" width="640" height="360" wmode="direct" seamlesstabbing="true" allowfullscreen="true" allowscriptaccess="always" overstretch="true" flashvars="guid=sAiXhCfV&amp;isDynamicSeeking=true" title=""></embed>
-	<?php else : ?>
-		<img class="about-overview-img" src="//s.w.org/images/core/3.9/overview.png?0" />
-	<?php endif; ?>
-	</div>
-	<h2 class="about-headline-callout"><?php _e( 'A smoother media editing&nbsp;experience' ); ?></h2>
-	<div class="feature-section col three-col">
-		<div class="col-1">
-			<img src="//s.w.org/images/core/3.9/editor.jpg?0" />
-			<h4><?php _e( 'Improved visual editing' ); ?></h4>
-			<p><?php _e( 'The updated visual editor has improved speed, accessibility, and mobile support.' );
-				echo ' ' . __( 'You can paste into the visual editor from your word processor without wasting time to clean up messy styling. (Yeah, we&#8217;re talking about you, Microsoft Word.)' ); ?></p>
-		</div>
-		<div class="col-2">
-			<img src="//s.w.org/images/core/3.9/image.gif?0" />
-			<h4><?php _e( 'Edit images easily' ); ?></h4>
-			<p><?php _e( 'With quicker access to crop and rotation tools, it&#8217;s now much easier to edit your images while editing posts. You can also scale images directly in the editor to find just the right fit.' ); ?></p>
-		</div>
-		<div class="col-3 last-feature">
-			<img src="//s.w.org/images/core/3.9/drop.jpg?0" />
-			<h4><?php _e( 'Drag and drop your images' ); ?></h4>
-			<p><?php _e( 'Uploading your images is easier than ever. Just grab them from your desktop and drop them onto the editor.' ); ?></p>
-		</div>
-	</div>
-
-	<hr>
-
-	<div class="feature-section col two-col">
-		<div class="col-1">
-			<img src="//s.w.org/images/core/3.9/gallery.jpg?0" />
-			<h4><?php _e( 'Gallery previews' ); ?></h4>
-			<p><?php _e( 'Galleries display a beautiful grid of images right in the editor, just like they do in your published post.' ); ?></p>
-		</div>
-		<div class="col-2 last-feature">
-			<div class="wp-playlist wp-audio-playlist wp-playlist-light">
-				<div class="wp-playlist-current-item"></div>
-				<audio controls="controls" preload="metadata"></audio>
-				<div class="wp-playlist-next"></div>
-				<div class="wp-playlist-prev"></div>
-				<?php
-				$audio_icon_js = esc_js( includes_url( 'images/media/audio.png' ) );
-				$wp_host = '//s.w.org/images/core/3.9/';
-				?>
-
-				<script type="application/json">{
-					"type":"audio",
-					"tracklist":true,
-					"tracknumbers":true,
-					"images":true,
-					"artists":true,
-					"tracks":[{
-						"src":"<?php echo $wp_host ?>AintMisbehavin.mp3",
-						"type":"audio\/mpeg","title":"Ain't Misbehavin'","caption":"","description":"",
-						"meta":{
-							"artist":"Louis Armstrong & His Orchestra",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"3:21"
-						},
-						"image":{"src":"//s.w.org/images/core/3.9/louis.jpg","width":308,"height":240},
-						"thumb":{"src":"//s.w.org/images/core/3.9/louis.jpg","width":308,"height":240}
-					},
-					{
-						"src":"<?php echo $wp_host ?>JellyRollMorton-BuddyBoldensBlues.mp3",
-						"type":"audio\/mpeg","title":"Buddy Bolden's Blues","caption":"","description":"",
-						"meta":{
-							"artist":"Jelly Roll Morten",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"2:09"
-						},
-						"image":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64},
-						"thumb":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64}
-					},
-					{
-						"src":"<?php echo $wp_host ?>DavenportBlues.mp3",
-						"type":"audio\/mpeg","title":"Davenport Blues","caption":"","description":"",
-						"meta":{
-							"artist":"Bix Beiderbecke & His Rhythm Jugglers",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"2:48"
-						},
-						"image":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64},
-						"thumb":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64}
-					},
-					{
-						"src":"<?php echo $wp_host ?>WolverineBlues.mp3",
-						"type":"audio\/mpeg","title":"Wolverine Blues","caption":"","description":"",
-						"meta":{
-							"artist":"Benny Goodman's Boys",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"2:55"
-						},
-						"image":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64},
-						"thumb":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64}
-					},
-					{
-						"src":"<?php echo $wp_host ?>Louisiana_Five-Dixie_Blues-1919.mp3",
-						"type":"audio\/mpeg","title":"Dixie Blues","caption":"","description":"",
-						"meta":{
-							"artist":"Louisiana Five",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"3:01"
-						},
-						"image":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64},
-						"thumb":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64}
-					},
-					{
-						"src":"<?php echo $wp_host ?>Johnny_Hodges_Orchestra-Squaty_Roo-1941.mp3",
-						"type":"audio\/mpeg","title":"Squaty Roo","caption":"","description":"",
-						"meta":{
-							"artist":"Johnny Hodges Orchestra",
-							"album":"78 RPMs & Cylinder Recordings",
-							"genre":"Jazz",
-							"length_formatted":"2:24"
-						},
-						"image":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64},
-						"thumb":{"src":"<?php echo $audio_icon_js ?>","width":48,"height":64}
-					}]
-				}</script>
+		<div class="about__header">
+			<div class="about__header-title">
+				<h1><?php echo esc_html( $version_text ); ?></h1>
 			</div>
-			<h4><?php _e( 'Do more with audio and video' ); ?></h4>
-			<p><?php _e( 'Images have galleries; now we&#8217;ve added simple audio and video playlists, so you can showcase your music and clips.' ); ?></p>
 		</div>
-	</div>
-</div>
 
-<hr>
+		<nav class="about__header-navigation nav-tab-wrapper wp-clearfix" aria-label="<?php esc_attr_e( 'Secondary menu' ); ?>">
+			<a href="about.php" class="nav-tab nav-tab-active" aria-current="page"><?php _e( 'What&#8217;s New' ); ?></a>
+			<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
+			<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
+			<a href="privacy.php" class="nav-tab"><?php _e( 'Privacy' ); ?></a>
+			<a href="contribute.php" class="nav-tab"><?php _e( 'Get Involved' ); ?></a>
+		</nav>
 
-<div class="changelog customize">
-	<div class="feature-section col two-col">
-		<div>
+		<div class="about__section">
+			<div class="column is-left-padding-zero is-right-padding-zero">
+				<h2><?php _e( 'Welcome to WordPress 7.1' ); ?></h2>
+				<p class="is-subheading"><?php _e( 'WordPress 7.1 makes styling and collaborating easier. Style how all blocks look across screen sizes and how the Button block responds to hover, focus, and active states, all without writing custom CSS. A streamlined media editor brings cropping, rotation, and metadata editing together in one workflow. Notes now support rich text and @mentions, and the admin bar travels with you into every editor, so the tools you rely on stay with you wherever you&#8217;re working.' ); ?></p>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns">
+			<div class="column is-vertically-aligned-center is-left-padding-zero">
+				<h3><?php _e( 'Apply responsive styles' ); ?></h3>
+				<p>
+					<strong><?php _e( 'Style content your way, on every screen.' ); ?></strong><br />
+					<?php _e( 'WordPress 7.1 takes a major step toward built-in responsive design. Set how a block looks at different screen sizes directly in the editor, for both Global Styles and individual blocks, all without writing custom CSS.' ); ?>
+				</p>
+			</div>
+			<div class="column is-vertically-aligned-center is-right-padding-zero">
+				<div class="about__image">
+					<img src="https://s.w.org/images/core/7.1/about-feature-01.webp?ver=20260814" alt="" height="900" width="900" />
+				</div>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns">
+			<div class="column is-vertically-aligned-center is-left-padding-zero">
+				<div class="about__image">
+					<img loading="lazy" src="https://s.w.org/images/core/7.1/about-feature-02.webp?ver=20260814" alt="" height="900" width="900" />
+				</div>
+			</div>
+			<div class="column is-vertically-aligned-center is-right-padding-zero">
+				<h3><?php _e( 'Admin bar, now in every editor' ); ?></h3>
+				<p>
+					<strong><?php _e( 'Consistent navigation, from dashboard to editor.' ); ?></strong><br />
+					<?php _e( 'The admin bar now stays with you across all editors, so you always know where you are. The admin bar also gets a small visual refresh.' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns">
+			<div class="column is-vertically-aligned-center is-left-padding-zero">
+				<h3><?php _e( 'A new way to crop' ); ?></h3>
+				<p>
+					<strong><?php _e( 'One dedicated workflow for editing your images.' ); ?></strong><br />
+					<?php _e( 'A new media editor modal replaces the old inline cropping tool, bringing freeform and aspect-ratio cropping, flip, precise rotation, and metadata editing together in a single streamlined workflow. The familiar Crop button still gets you there, now opening a dedicated space to crop, rotate, and adjust images before publishing.' ); ?>
+				</p>
+			</div>
+			<div class="column is-vertically-aligned-center is-right-padding-zero">
+				<div class="about__image">
+					<img loading="lazy" src="https://s.w.org/images/core/7.1/about-feature-03.webp?ver=20260814" alt="" height="900" width="900" />
+				</div>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns">
+			<div class="column is-vertically-aligned-center is-left-padding-zero">
+				<div class="about__image">
+					<img loading="lazy" src="https://s.w.org/images/core/7.1/about-feature-04.webp?ver=20260814" alt="" height="900" width="900" />
+				</div>
+			</div>
+			<div class="column is-vertically-aligned-center is-right-padding-zero">
+				<h3><?php _e( 'Inline notes with mentions and rich text' ); ?></h3>
+				<p>
+					<strong><?php _e( 'More ways to leave feedback.' ); ?></strong><br />
+					<?php _e( 'Notes now support rich text and @mentions. Add bold, italic, code, and links so feedback reads clearly. Type &#8220;@&#8221; to pull up a list of collaborators to tag the right person directly, with built-in email notifications. Leave a note on a specific text selection instead of an entire block. Start more than one conversation on the same block. Collapse long notes to keep the margin tidy.' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<hr class="is-invisible is-large" />
+
+		<div class="about__section has-2-columns">
+			<div class="column is-left-padding-zero">
+				<div class="about__image">
+					<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+						<path fill="#1e1e1e" d="M32.455 17.72a1.592 1.592 0 0 1 .599 2.195l-7.637 12.99a1.653 1.653 0 0 1-2.235.589 1.592 1.592 0 0 1-.599-2.195l7.637-12.99a1.653 1.653 0 0 1 2.235-.589ZM13.774 23.21a1.653 1.653 0 0 0-2.236.589 1.592 1.592 0 0 0 .6 2.195l.944.536c.783.444 1.783.18 2.235-.588a1.592 1.592 0 0 0-.599-2.196l-.944-.535ZM16.432 17.72a1.653 1.653 0 0 1 2.236.588l.545.928a1.592 1.592 0 0 1-.599 2.196 1.653 1.653 0 0 1-2.235-.588l-.546-.928a1.592 1.592 0 0 1 .6-2.196ZM25.637 16.5c0-.888-.733-1.607-1.637-1.607s-1.636.72-1.636 1.607v1.071c0 .888.732 1.608 1.636 1.608.904 0 1.637-.72 1.637-1.608V16.5Z"/>
+						<path fill="#1e1e1e" fill-rule="evenodd" d="M4.91 27.75C4.91 17.395 13.455 9 24 9s19.091 8.395 19.091 18.75c0 3.909-1.22 7.542-3.305 10.548l-.488.702H8.702l-.488-.702A18.438 18.438 0 0 1 4.91 27.75ZM24 12.214c-8.736 0-15.818 6.956-15.818 15.536 0 2.943.832 5.692 2.277 8.036h27.082a15.25 15.25 0 0 0 2.277-8.036c0-8.58-7.082-15.536-15.818-15.536Z" clip-rule="evenodd"/>
+					</svg>
+				</div>
+				<h3><?php _e( 'Improved media handling' ); ?></h3>
+				<p><?php _e( 'Image compression, resizing, and thumbnail generation now happen in the browser, via a WebAssembly build of libvips, so large uploads won&#8217;t hit PHP memory limits or time out on shared hosts. This also frees up server CPU and memory, while producing smaller files for visitors. Media handling includes built-in support for AVIF, HEIC and HDR gain maps.' ); ?></p>
+			</div>
+			<div class="column is-right-padding-zero">
+				<div class="about__image">
+					<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+						<path fill="#1e1e1e" d="M24 13.84c-.752 0-1.397-.287-1.936-.86a2.902 2.902 0 0 1-.809-2.06c0-.8.27-1.487.809-2.06S23.248 8 24 8c.753 0 1.398.287 1.937.86.54.573.809 1.26.809 2.06s-.27 1.487-.809 2.06-1.184.86-1.937.86ZM19.976 40V18.68a69.562 69.562 0 0 1-4.945-.56 45.877 45.877 0 0 1-4.57-.92l.565-2.4a46.79 46.79 0 0 0 6.356 1.14c2.106.227 4.312.34 6.618.34 2.307 0 4.513-.113 6.62-.34a46.786 46.786 0 0 0 6.355-1.14l.564 2.4c-1.454.373-2.977.68-4.57.92a69.55 69.55 0 0 1-4.945.56V40h-2.256V29.6h-3.535V40h-2.257Z"/>
+					</svg>
+				</div>
+				<h3><?php _e( 'Accessibility' ); ?></h3>
+				<p><?php _e( 'WordPress 7.1 continues to polish accessibility across WordPress Core and Gutenberg, advancing the goals to meet accessibility standards. In this release, high impact changes include the new accessible tooltips API, improved predictability for screen readers, and improved labeling in many places in the admin. The editor adds extensive improvements to navigation and interaction.' ); ?></p>
+			</div>
+		</div>
+
+		<hr class="is-invisible is-large" style="margin-bottom:calc(2 * var(--gap));" />
+
+		<div class="about__section has-2-columns is-wider-left has-subtle-background-color is-feature">
+			<h3 class="is-section-header"><?php _e( 'And much more' ); ?></h3>
+			<div class="column">
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Version number. */
+						__( 'For a comprehensive overview of all the new features and enhancements in WordPress %s, please visit the feature-showcase website.' ),
+						$display_major_version
+					);
+					?>
+				</p>
+			</div>
+			<div class="column aligncenter">
+				<div class="about__image">
+					<a href="<?php echo esc_url( $release_page_url ); ?>" class="button button-primary button-hero"><?php _e( 'See everything new' ); ?></a>
+				</div>
+			</div>
+		</div>
+
+		<hr class="is-large" style="margin-top:calc(2 * var(--gap));" />
+
+		<div class="about__section has-3-columns">
+			<div class="column about__image is-vertically-aligned-top is-left-padding-zero">
+				<img src="<?php echo esc_url( admin_url( 'images/about-release-badge.svg?ver=7.1' ) ); ?>" alt="<?php echo esc_attr( $version_text ); ?>" height="280" width="280" />
+			</div>
+			<div class="column is-vertically-aligned-center is-right-padding-zero" style="grid-column-end:span 2">
+				<h3>
+					<?php
+					printf(
+						/* translators: %s: Version number. */
+						__( 'Learn more about WordPress %s' ),
+						$display_major_version
+					);
+					?>
+				</h3>
+				<p>
+					<?php
+					printf(
+						/* translators: 1: Learn WordPress link, 2: Workshops link. */
+						__( '<a href="%1$s">Learn WordPress</a> is a free resource for new and experienced WordPress users. Learn is stocked with how-to videos on using various features in WordPress, <a href="%2$s">interactive workshops</a> for exploring topics in-depth, and lesson plans for diving deep into specific areas of WordPress.' ),
+						'https://learn.wordpress.org/',
+						'https://learn.wordpress.org/online-workshops/'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns">
+			<div class="column is-left-padding-zero">
+				<div class="about__image">
+					<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+						<path fill="#1e1e1e" d="M32 15.5H16v3h16v-3ZM16 22h16v3H16v-3ZM28 28.5H16v3h12v-3Z"/>
+						<path fill="#1e1e1e" fill-rule="evenodd" d="M34 8H14a4 4 0 0 0-4 4v24a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4V12a4 4 0 0 0-4-4Zm-20 3h20a1 1 0 0 1 1 1v24a1 1 0 0 1-1 1H14a1 1 0 0 1-1-1V12a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
+					</svg>
+				</div>
+				<h4 style="margin-top: calc(var(--gap) / 2); margin-bottom: calc(var(--gap) / 2);">
+					<a href="<?php echo esc_url( $release_notes_url ); ?>">
+						<?php
+						printf(
+							/* translators: %s: WordPress version number. */
+							__( 'WordPress %s Release Notes' ),
+							$display_major_version
+						);
+						?>
+					</a>
+				</h4>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: WordPress version number. */
+						__( 'Read the WordPress %s Release Notes for information on installation, enhancements, fixed issues, release contributors, learning resources, and the list of file changes.' ),
+						$display_major_version
+					);
+					?>
+				</p>
+			</div>
+			<div class="column is-right-padding-zero">
+				<div class="about__image">
+					<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+						<path fill="#1e1e1e" stroke="#fff" stroke-width=".5" d="M26.5 24.25h13.75v11.5h-14v8h-3.5v-8H12.604L8.09 31.237a1.75 1.75 0 0 1 0-2.474l4.513-4.513H22.75v-4.5h-14V8.25h14v-4h3.5v4h10.146l4.513 4.513a1.75 1.75 0 0 1 0 2.474l-4.513 4.513H26.25v4.5h.25ZM12.25 16v.25h22.704l.073-.073 1.293-1.293a1.25 1.25 0 0 0 0-1.768l-1.293-1.293-.073-.073H12.25V16Zm1.723 16.177.073.073H36.75v-4.5H14.046l-.073.073-1.293 1.293a1.25 1.25 0 0 0 0 1.768l1.293 1.293Z"/>
+					</svg>
+				</div>
+				<h4 style="margin-top: calc(var(--gap) / 2); margin-bottom: calc(var(--gap) / 2);">
+					<a href="<?php echo esc_url( $field_guide_url ); ?>">
+						<?php
+						printf(
+							/* translators: %s: WordPress version number. */
+							__( 'WordPress %s Field Guide' ),
+							$display_major_version
+						);
+						?>
+					</a>
+				</h4>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: WordPress version number. */
+						__( 'Explore the WordPress %s Field Guide. Learn about the changes in this release with detailed developer notes to help you build with WordPress.' ),
+						$display_major_version
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<hr class="is-large" />
+
+		<div class="return-to-dashboard">
 			<?php
-				echo wp_video_shortcode( array(
-					'mp4'      => '//s.w.org/images/core/3.9/widgets.mp4',
-					'ogv'      => '//s.w.org/images/core/3.9/widgets.ogv',
-					'webm'     => '//s.w.org/images/core/3.9/widgets.webm',
-					'loop'     => true,
-					'autoplay' => true,
-					'width'    => 499
-				) );
+			if ( isset( $_GET['updated'] ) && current_user_can( 'update_core' ) ) {
+				printf(
+					'<a href="%1$s">%2$s</a> | ',
+					esc_url( self_admin_url( 'update-core.php' ) ),
+					is_multisite() ? __( 'Go to Updates' ) : __( 'Go to Dashboard &rarr; Updates' )
+				);
+			}
+
+			printf(
+				'<a href="%1$s">%2$s</a>',
+				esc_url( self_admin_url() ),
+				is_blog_admin() ? __( 'Go to Dashboard &rarr; Home' ) : __( 'Go to Dashboard' )
+			);
 			?>
-			<h4><?php _e( 'Live widget and header previews' ); ?></h4>
-			<p><?php _e( 'Add, edit, and rearrange your site&#8217;s widgets right in the theme customizer. No &#8220;save and surprise&#8221; &mdash; preview your changes live and only save them when you&#8217;re ready.' ); ?></p>
-			<p><?php _e( 'The improved header image tool also lets you upload, crop, and manage headers while customizing your theme.' ); ?></p>
-		</div>
-		<div class="last-feature">
-			<img src="//s.w.org/images/core/3.9/theme.jpg?0" />
-			<h4><?php _e( 'Stunning new theme browser' ); ?></h4>
-			<p><?php _e( 'Looking for a new theme should be easy and fun. Lose yourself in the boundless supply of free WordPress.org themes with the beautiful new theme browser.' ); ?></p>
-		<?php if ( current_user_can( 'install_themes' ) ) { ?>
-			<p><a href="<?php echo network_admin_url( 'theme-install.php' ); ?>" class="button button-large button-primary"><?php _e( 'Browse Themes' ); ?></a></p>
-		<?php } ?>
 		</div>
 	</div>
-</div>
 
-<hr>
+<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
 
-<div class="changelog under-the-hood">
-	<h3><?php _e( 'Under the Hood' ); ?></h3>
-
-	<div class="feature-section col three-col">
-		<div>
-			<h4><?php _e( 'Semantic Captions and Galleries' ); ?></h4>
-			<p><?php _e( 'Theme developers have new options for images and galleries that use intelligent HTML5 markup.' ); ?></p>
-
-			<h4><?php _e( 'Inline Code Documentation' ); ?></h4>
-			<p><?php _e( 'Every action and filter hook in WordPress is now documented, along with expanded documentation for the media manager and customizer APIs.' ); ?></p>
-		</div>
-		<div>
-			<h4><?php _e( 'External Libraries' ); ?></h4>
-			<p><?php _e( 'Updated libraries: TinyMCE&nbsp;4, jQuery&nbsp;1.11, Backbone&nbsp;1.1, Underscore&nbsp;1.6, Plupload&nbsp;2, MediaElement&nbsp;2.14, Masonry&nbsp;3.' ); ?></p>
-
-			<h4><?php _e( 'Improved Database Layer' ); ?></h4>
-			<p><?php _e( 'Database connections are now more fault-resistant and have improved compatibility with PHP 5.5 and MySQL 5.6.' ); ?></p>
-		</div>
-		<div class="last-feature">
-			<h4><?php _e( 'New Utility Functions' ); ?></h4>
-			<p><?php _e( 'Identify a hook in progress with <code>doing_action()</code> and <code>doing_filter()</code>, and manipulate custom image sizes with <code>has_image_size()</code> and <code>remove_image_size()</code>.' ); ?></p>
-			<p><?php _e( 'Plugins and themes registering custom image sizes can now register suggested cropping points. For example, prevent heads from being cropped out of photos with a top-center crop.' ); ?></p>
-		</div>
-</div>
-
-<hr>
-
-<div class="return-to-dashboard">
-	<?php if ( current_user_can( 'update_core' ) && isset( $_GET['updated'] ) ) : ?>
-	<a href="<?php echo esc_url( self_admin_url( 'update-core.php' ) ); ?>"><?php
-		is_multisite() ? _e( 'Return to Updates' ) : _e( 'Return to Dashboard &rarr; Updates' );
-	?></a> |
-	<?php endif; ?>
-	<a href="<?php echo esc_url( self_admin_url() ); ?>"><?php
-		is_blog_admin() ? _e( 'Go to Dashboard &rarr; Home' ) : _e( 'Go to Dashboard' ); ?></a>
-</div>
-
-</div>
 <?php
-
-include( ABSPATH . 'wp-admin/admin-footer.php' );
 
 // These are strings we may use to describe maintenance/security releases, where we aim for no new strings.
 return;
 
-_n_noop( 'Maintenance Release', 'Maintenance Releases' );
-_n_noop( 'Security Release', 'Security Releases' );
-_n_noop( 'Maintenance and Security Release', 'Maintenance and Security Releases' );
+__( 'Maintenance Release' );
+__( 'Maintenance Releases' );
 
-/* translators: 1: WordPress version number. */
-_n_noop( '<strong>Version %1$s</strong> addressed a security issue.',
-         '<strong>Version %1$s</strong> addressed some security issues.' );
+__( 'Security Release' );
+__( 'Security Releases' );
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. */
-_n_noop( '<strong>Version %1$s</strong> addressed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed %2$s bugs.' );
+__( 'Maintenance and Security Release' );
+__( 'Maintenance and Security Releases' );
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. Singular security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.' );
+/* translators: %s: WordPress version number. */
+__( '<strong>Version %s</strong> addressed one security issue.' );
+/* translators: %s: WordPress version number. */
+__( '<strong>Version %s</strong> addressed some security issues.' );
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. More than one security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.' );
+/* translators: 1: WordPress version number, 2: Plural number of bugs. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed %2$s bugs.'
+);
 
+/* translators: 1: WordPress version number, 2: Plural number of bugs. Singular security issue. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.'
+);
+
+/* translators: 1: WordPress version number, 2: Plural number of bugs. More than one security issue. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.'
+);
+
+/* translators: %s: Documentation URL. */
 __( 'For more information, see <a href="%s">the release notes</a>.' );
+
+/* translators: 1: WordPress version number, 2: Link to update WordPress */
+__( 'Important! Your version of WordPress (%1$s) is no longer supported, you will not receive any security updates for your website. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.' );
+
+/* translators: 1: WordPress version number, 2: Link to update WordPress */
+__( 'Important! Your version of WordPress (%1$s) will stop receiving security updates in the near future. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.' );
+
+/* translators: %s: The major version of WordPress for this branch. */
+__( 'This is the final release of WordPress %s' );
+
+/* translators: The localized WordPress download URL. */
+__( 'https://wordpress.org/download/' );

@@ -1,8 +1,11 @@
+/**
+ * @output wp-includes/js/customize-views.js
+ */
+
 (function( $, wp, _ ) {
 
 	if ( ! wp || ! wp.customize ) { return; }
 	var api = wp.customize;
-
 
 	/**
 	 * wp.customize.HeaderTool.CurrentView
@@ -12,10 +15,13 @@
 	 *
 	 * Instantiate with model wp.customize.HeaderTool.currentHeader.
 	 *
+	 * @memberOf wp.customize.HeaderTool
+	 * @alias wp.customize.HeaderTool.CurrentView
+	 *
 	 * @constructor
 	 * @augments wp.Backbone.View
 	 */
-	api.HeaderTool.CurrentView = wp.Backbone.View.extend({
+	api.HeaderTool.CurrentView = wp.Backbone.View.extend(/** @lends wp.customize.HeaderTool.CurrentView.prototype */{
 		template: wp.template('header-current'),
 
 		initialize: function() {
@@ -25,56 +31,20 @@
 
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
-			this.setPlaceholder();
 			this.setButtons();
 			return this;
 		},
 
-		getHeight: function() {
-			var image = this.$el.find('img'),
-				saved, height, headerImageData;
-
-			if (image.length) {
-				this.$el.find('.inner').hide();
-			} else {
-				this.$el.find('.inner').show();
-				return 40;
-			}
-
-			saved = this.model.get('savedHeight');
-			height = image.height() || saved;
-
-			// happens at ready
-			if (!height) {
-				headerImageData = api.get().header_image_data;
-
-				if (headerImageData && headerImageData.width && headerImageData.height) {
-					// hardcoded container width
-					height = 260 / headerImageData.width * headerImageData.height;
-				}
-				else {
-					// fallback for when no image is set
-					height = 40;
-				}
-			}
-
-			return height;
-		},
-
-		setPlaceholder: function(_height) {
-			var height = _height || this.getHeight();
-			this.model.set('savedHeight', height);
-			this.$el
-				.add(this.$el.find('.placeholder'))
-				.height(height);
-		},
-
 		setButtons: function() {
 			var elements = $('#customize-control-header_image .actions .remove');
+			var addButton = $('#customize-control-header_image .actions .new');
+
 			if (this.model.get('choice')) {
 				elements.show();
+				addButton.removeClass('upload-button');
 			} else {
 				elements.hide();
+				addButton.addClass('upload-button');
 			}
 		}
 	});
@@ -91,10 +61,13 @@
 	 * Manually changes model wp.customize.HeaderTool.currentHeader via the
 	 * `select` method.
 	 *
+	 * @memberOf wp.customize.HeaderTool
+	 * @alias wp.customize.HeaderTool.ChoiceView
+	 *
 	 * @constructor
 	 * @augments wp.Backbone.View
 	 */
-	api.HeaderTool.ChoiceView = wp.Backbone.View.extend({
+	api.HeaderTool.ChoiceView = wp.Backbone.View.extend(/** @lends wp.customize.HeaderTool.ChoiceView.prototype */{
 		template: wp.template('header-choice'),
 
 		className: 'header-view',
@@ -135,10 +108,6 @@
 			});
 		},
 
-		getHeight: api.HeaderTool.CurrentView.prototype.getHeight,
-
-		setPlaceholder: api.HeaderTool.CurrentView.prototype.setPlaceholder,
-
 		select: function() {
 			this.preventJump();
 			this.model.save();
@@ -170,10 +139,13 @@
 	 *
 	 * Takes a wp.customize.HeaderTool.ChoiceList.
 	 *
+	 * @memberOf wp.customize.HeaderTool
+	 * @alias wp.customize.HeaderTool.ChoiceListView
+	 *
 	 * @constructor
 	 * @augments wp.Backbone.View
 	 */
-	api.HeaderTool.ChoiceListView = wp.Backbone.View.extend({
+	api.HeaderTool.ChoiceListView = wp.Backbone.View.extend(/** @lends wp.customize.HeaderTool.ChoiceListView.prototype */{
 		initialize: function() {
 			this.listenTo(this.collection, 'add', this.addOne);
 			this.listenTo(this.collection, 'remove', this.render);
@@ -213,10 +185,13 @@
 	 * Aggregates wp.customize.HeaderTool.ChoiceList collections (or any
 	 * Backbone object, really) and acts as a bus to feed them events.
 	 *
+	 * @memberOf wp.customize.HeaderTool
+	 * @alias wp.customize.HeaderTool.CombinedList
+	 *
 	 * @constructor
 	 * @augments wp.Backbone.View
 	 */
-	api.HeaderTool.CombinedList = wp.Backbone.View.extend({
+	api.HeaderTool.CombinedList = wp.Backbone.View.extend(/** @lends wp.customize.HeaderTool.CombinedList.prototype */{
 		initialize: function(collections) {
 			this.collections = collections;
 			this.on('all', this.propagate, this);

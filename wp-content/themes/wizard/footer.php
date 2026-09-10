@@ -40,8 +40,8 @@
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
-<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/jQuery.js"></script>
-<script type="text/javascript" src="http://wizard.technology/wp-content/themes/wizard/js/main.js"></script>
+<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/jQuery.js"></script>
+<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/main.js"></script>
 
 <?php
 	if(is_front_page())
@@ -70,7 +70,6 @@ if ( !is_user_logged_in() ) {
 	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 	  ga('create', 'UA-51761524-1', 'wizard.technology');
-	  ga('require', 'displayfeatures');
 	  ga('send', 'pageview');
 
 	</script>";

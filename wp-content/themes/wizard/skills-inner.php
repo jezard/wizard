@@ -9,8 +9,7 @@
 					$page_title = 'Skills';
 					echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
 					echo '<div class="section-break"></div>';
-					$pager = get_page_by_title( $page_title );
-
+					$pager = wizard_get_page_by_title( $page_title );
 				?>
 
 				<?php
@@ -41,10 +40,20 @@
 				<?php $wp_query = new WP_Query(); ?>
 				<?php $wp_query->query($args); 	?>
 
+				<?php $the_last_page = $wp_query->max_num_pages; ?>
+				<?php $loaded_page = intval($paged); ?>
+
 				<?php if ( have_posts() ) : while (have_posts()) : the_post(); ?>
 
 					<aside class="col-1-3">
-						<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php echo get_the_post_thumbnail($post->ID, 'project-thumb', array('class' => 'grayscale'))?></a></span></nav>
+						<nav class="portfolio-thumb"><span><a href="<?php echo get_the_permalink(); ?>" title="<?php echo get_the_title(); ?>"><?php
+							$thumb = get_the_post_thumbnail($post->ID, 'project-thumb', array('class' => 'grayscale'));
+							if ( $thumb ) {
+								echo $thumb;
+							} else {
+								echo '<span class="skill-title">' . get_the_title() . '</span>';
+							}
+						?></a></span></nav>
 					</aside>
 
 				<?php endwhile; ?>

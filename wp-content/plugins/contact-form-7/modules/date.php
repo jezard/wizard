@@ -4,20 +4,23 @@
 ** 	[date] and [date*]		# Date
 **/
 
-/* Shortcode handler */
+/* form_tag handler */
 
-add_action( 'wpcf7_init', 'wpcf7_add_shortcode_date' );
+add_action( 'wpcf7_init', 'wpcf7_add_form_tag_date', 10, 0 );
 
-function wpcf7_add_shortcode_date() {
-	wpcf7_add_shortcode( array( 'date', 'date*' ),
-		'wpcf7_date_shortcode_handler', true );
+function wpcf7_add_form_tag_date() {
+	wpcf7_add_form_tag( array( 'date', 'date*' ),
+		'wpcf7_date_form_tag_handler',
+		array(
+			'name-attr' => true,
+		)
+	);
 }
 
-function wpcf7_date_shortcode_handler( $tag ) {
-	$tag = new WPCF7_Shortcode( $tag );
-
-	if ( empty( $tag->name ) )
+function wpcf7_date_form_tag_handler( $tag ) {
+	if ( empty( $tag->name ) ) {
 		return '';
+	}
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 
@@ -25,183 +28,235 @@ function wpcf7_date_shortcode_handler( $tag ) {
 
 	$class .= ' wpcf7-validates-as-date';
 
-	if ( $validation_error )
+	if ( $validation_error ) {
 		$class .= ' wpcf7-not-valid';
+	}
 
 	$atts = array();
 
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_id_option();
-	$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
+	$atts['tabindex'] = $tag->get_option( 'tabindex', 'signed_int', true );
 	$atts['min'] = $tag->get_date_option( 'min' );
 	$atts['max'] = $tag->get_date_option( 'max' );
 	$atts['step'] = $tag->get_option( 'step', 'int', true );
+	$atts['readonly'] = $tag->has_option( 'readonly' );
+	$atts['autocomplete'] = $tag->get_autocomplete_option();
 
-	if ( $tag->has_option( 'readonly' ) )
-		$atts['readonly'] = 'readonly';
-
-	if ( $tag->is_required() )
+	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
+	}
 
-	$atts['aria-invalid'] = $validation_error ? 'true' : 'false';
+	if ( $validation_error ) {
+		$atts['aria-invalid'] = 'true';
+		$atts['aria-describedby'] = wpcf7_get_validation_error_reference(
+			$tag->name
+		);
+	} else {
+		$atts['aria-invalid'] = 'false';
+	}
 
 	$value = (string) reset( $tag->values );
 
-	if ( $tag->has_option( 'placeholder' ) || $tag->has_option( 'watermark' ) ) {
+	if ( $tag->has_option( 'placeholder' ) or $tag->has_option( 'watermark' ) ) {
 		$atts['placeholder'] = $value;
 		$value = '';
 	}
 
-	if ( wpcf7_is_posted() && isset( $_POST[$tag->name] ) )
-		$value = wp_unslash( $_POST[$tag->name] );
+	$value = $tag->get_default_option( $value );
 
-	$atts['value'] = $value;
+	if ( $value ) {
+		$datetime_obj = date_create_immutable(
+			preg_replace( '/[_]+/', ' ', $value ),
+			wp_timezone()
+		);
 
-	if ( wpcf7_support_html5() ) {
-		$atts['type'] = $tag->basetype;
-	} else {
-		$atts['type'] = 'text';
+		if ( $datetime_obj ) {
+			$value = $datetime_obj->format( 'Y-m-d' );
+		}
 	}
 
+	$value = wpcf7_get_hangover( $tag->name, $value );
+
+	$atts['value'] = $value;
+	$atts['type'] = $tag->basetype;
 	$atts['name'] = $tag->name;
 
-	$atts = wpcf7_format_atts( $atts );
-
 	$html = sprintf(
-		'<span class="wpcf7-form-control-wrap %1$s"><input %2$s />%3$s</span>',
-		sanitize_html_class( $tag->name ), $atts, $validation_error );
+		'<span class="wpcf7-form-control-wrap" data-name="%1$s"><input %2$s />%3$s</span>',
+		esc_attr( $tag->name ),
+		wpcf7_format_atts( $atts ),
+		$validation_error
+	);
 
 	return $html;
 }
 
 
-/* Validation filter */
+add_action(
+	'wpcf7_swv_create_schema',
+	'wpcf7_swv_add_date_rules',
+	10, 2
+);
 
-add_filter( 'wpcf7_validate_date', 'wpcf7_date_validation_filter', 10, 2 );
-add_filter( 'wpcf7_validate_date*', 'wpcf7_date_validation_filter', 10, 2 );
+function wpcf7_swv_add_date_rules( $schema, $contact_form ) {
+	$tags = $contact_form->scan_form_tags( array(
+		'basetype' => array( 'date' ),
+	) );
 
-function wpcf7_date_validation_filter( $result, $tag ) {
-	$tag = new WPCF7_Shortcode( $tag );
+	foreach ( $tags as $tag ) {
+		if ( $tag->is_required() ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'required', array(
+					'field' => $tag->name,
+					'error' => wpcf7_get_message( 'invalid_required' ),
+				) )
+			);
+		}
 
-	$name = $tag->name;
+		$schema->add_rule(
+			wpcf7_swv_create_rule( 'date', array(
+				'field' => $tag->name,
+				'error' => wpcf7_get_message( 'invalid_date' ),
+			) )
+		);
 
-	$min = $tag->get_date_option( 'min' );
-	$max = $tag->get_date_option( 'max' );
+		$min = $tag->get_date_option( 'min' );
+		$max = $tag->get_date_option( 'max' );
 
-	$value = isset( $_POST[$name] )
-		? trim( strtr( (string) $_POST[$name], "\n", " " ) )
-		: '';
+		if ( false !== $min ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'mindate', array(
+					'field' => $tag->name,
+					'threshold' => $min,
+					'error' => wpcf7_get_message( 'date_too_early' ),
+				) )
+			);
+		}
 
-	if ( $tag->is_required() && '' == $value ) {
-		$result['valid'] = false;
-		$result['reason'][$name] = wpcf7_get_message( 'invalid_required' );
-	} elseif ( '' != $value && ! wpcf7_is_date( $value ) ) {
-		$result['valid'] = false;
-		$result['reason'][$name] = wpcf7_get_message( 'invalid_date' );
-	} elseif ( '' != $value && ! empty( $min ) && $value < $min ) {
-		$result['valid'] = false;
-		$result['reason'][$name] = wpcf7_get_message( 'date_too_early' );
-	} elseif ( '' != $value && ! empty( $max ) && $max < $value ) {
-		$result['valid'] = false;
-		$result['reason'][$name] = wpcf7_get_message( 'date_too_late' );
+		if ( false !== $max ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'maxdate', array(
+					'field' => $tag->name,
+					'threshold' => $max,
+					'error' => wpcf7_get_message( 'date_too_late' ),
+				) )
+			);
+		}
 	}
-
-	if ( isset( $result['reason'][$name] ) && $id = $tag->get_id_option() ) {
-		$result['idref'][$name] = $id;
-	}
-
-	return $result;
 }
 
 
 /* Messages */
 
-add_filter( 'wpcf7_messages', 'wpcf7_date_messages' );
+add_filter( 'wpcf7_messages', 'wpcf7_date_messages', 10, 1 );
 
 function wpcf7_date_messages( $messages ) {
 	return array_merge( $messages, array(
 		'invalid_date' => array(
-			'description' => __( "Date format that the sender entered is invalid", 'contact-form-7' ),
-			'default' => __( 'Date format seems invalid.', 'contact-form-7' )
+			'description' => __( 'Date format that the sender entered is invalid', 'contact-form-7' ),
+			'default' => __( 'Please enter a date in YYYY-MM-DD format.', 'contact-form-7' ),
 		),
 
 		'date_too_early' => array(
-			'description' => __( "Date is earlier than minimum limit", 'contact-form-7' ),
-			'default' => __( 'This date is too early.', 'contact-form-7' )
+			'description' => __( 'Date is earlier than minimum limit', 'contact-form-7' ),
+			'default' => __( 'This field has a too early date.', 'contact-form-7' ),
 		),
 
 		'date_too_late' => array(
-			'description' => __( "Date is later than maximum limit", 'contact-form-7' ),
-			'default' => __( 'This date is too late.', 'contact-form-7' )
-		) ) );
+			'description' => __( 'Date is later than maximum limit', 'contact-form-7' ),
+			'default' => __( 'This field has a too late date.', 'contact-form-7' ),
+		),
+	) );
 }
 
 
 /* Tag generator */
 
-add_action( 'admin_init', 'wpcf7_add_tag_generator_date', 19 );
+add_action( 'wpcf7_admin_init', 'wpcf7_add_tag_generator_date', 19, 0 );
 
 function wpcf7_add_tag_generator_date() {
-	if ( ! function_exists( 'wpcf7_add_tag_generator' ) )
-		return;
+	$tag_generator = WPCF7_TagGenerator::get_instance();
 
-	wpcf7_add_tag_generator( 'date', __( 'Date', 'contact-form-7' ),
-		'wpcf7-tg-pane-date', 'wpcf7_tg_pane_date' );
+	$tag_generator->add( 'date', __( 'date', 'contact-form-7' ),
+		'wpcf7_tag_generator_date',
+		array( 'version' => '2' )
+	);
 }
 
-function wpcf7_tg_pane_date( &$contact_form ) {
-	wpcf7_tg_pane_date_and_relatives( 'date' );
+function wpcf7_tag_generator_date( $contact_form, $options ) {
+	$field_types = array(
+		'date' => array(
+			'display_name' => __( 'Date field', 'contact-form-7' ),
+			'heading' => __( 'Date field form-tag generator', 'contact-form-7' ),
+			'description' => __( 'Generates a form-tag for a <a href="https://contactform7.com/date-field/">date input field</a>.', 'contact-form-7' ),
+		),
+	);
+
+	$tgg = new WPCF7_TagGeneratorGenerator( $options['content'] );
+
+	$formatter = new WPCF7_HTMLFormatter();
+
+	$formatter->append_start_tag( 'header', array(
+		'class' => 'description-box',
+	) );
+
+	$formatter->append_start_tag( 'h3' );
+
+	$formatter->append_preformatted(
+		esc_html( $field_types['date']['heading'] )
+	);
+
+	$formatter->end_tag( 'h3' );
+
+	$formatter->append_start_tag( 'p' );
+
+	$formatter->append_preformatted(
+		wp_kses_data( $field_types['date']['description'] )
+	);
+
+	$formatter->end_tag( 'header' );
+
+	$formatter->append_start_tag( 'div', array(
+		'class' => 'control-box',
+	) );
+
+	$formatter->call_user_func( static function () use ( $tgg, $field_types ) {
+		$tgg->print( 'field_type', array(
+			'with_required' => true,
+			'select_options' => array(
+				'date' => $field_types['date']['display_name'],
+			),
+		) );
+
+		$tgg->print( 'field_name' );
+
+		$tgg->print( 'class_attr' );
+
+		$tgg->print( 'min_max', array(
+			'type' => 'date',
+			'title' => __( 'Range', 'contact-form-7' ),
+			'min_option' => 'min:',
+			'max_option' => 'max:',
+		) );
+
+		$tgg->print( 'default_value', array(
+			'type' => 'date',
+			'with_placeholder' => false,
+		) );
+	} );
+
+	$formatter->end_tag( 'div' );
+
+	$formatter->append_start_tag( 'footer', array(
+		'class' => 'insert-box',
+	) );
+
+	$formatter->call_user_func( static function () use ( $tgg, $field_types ) {
+		$tgg->print( 'insert_box_content' );
+
+		$tgg->print( 'mail_tag_tip' );
+	} );
+
+	$formatter->print();
 }
-
-function wpcf7_tg_pane_date_and_relatives( $type = 'date' ) {
-	if ( ! in_array( $type, array() ) )
-		$type = 'date';
-
-?>
-<div id="wpcf7-tg-pane-<?php echo $type; ?>" class="hidden">
-<form action="">
-<table>
-<tr><td><input type="checkbox" name="required" />&nbsp;<?php echo esc_html( __( 'Required field?', 'contact-form-7' ) ); ?></td></tr>
-<tr><td><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?><br /><input type="text" name="name" class="tg-name oneline" /></td><td></td></tr>
-</table>
-
-<table>
-<tr>
-<td><code>id</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="text" name="id" class="idvalue oneline option" /></td>
-
-<td><code>class</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="text" name="class" class="classvalue oneline option" /></td>
-</tr>
-
-<tr>
-<td><code>min</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="date" name="min" class="date oneline option" /></td>
-
-<td><code>max</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="date" name="max" class="date oneline option" /></td>
-</tr>
-
-<tr>
-<td><code>step</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="number" name="step" class="numeric oneline option" min="1" /></td>
-</tr>
-
-<tr>
-<td><?php echo esc_html( __( 'Default value', 'contact-form-7' ) ); ?> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br /><input type="text" name="values" class="oneline" /></td>
-
-<td>
-<br /><input type="checkbox" name="placeholder" class="option" />&nbsp;<?php echo esc_html( __( 'Use this text as placeholder?', 'contact-form-7' ) ); ?>
-</td>
-</tr>
-</table>
-
-<div class="tg-tag"><?php echo esc_html( __( "Copy this code and paste it into the form left.", 'contact-form-7' ) ); ?><br /><input type="text" name="<?php echo $type; ?>" class="tag wp-ui-text-highlight code" readonly="readonly" onfocus="this.select()" /></div>
-
-<div class="tg-mail-tag"><?php echo esc_html( __( "And, put this code into the Mail fields below.", 'contact-form-7' ) ); ?><br /><input type="text" class="mail-tag wp-ui-text-highlight code" readonly="readonly" onfocus="this.select()" /></div>
-</form>
-</div>
-<?php
-}
-
-?>

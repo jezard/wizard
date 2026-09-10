@@ -86,11 +86,13 @@ function wizard_widgets_init() {
 	) );
 	register_sidebar(array(
        'name'=>'Footer Widgets',
+       'id' => 'footer-widgets',
        'before_widget' => '<div id="%1$s" class="widget subfooter col-1-4 %2$s">',
        'after_widget' => '</div>',
    ));
    register_sidebar(array(
        'name'=>'Footer legal',
+       'id' => 'footer-legal',
        'before_widget' => '<div id="%1$s" class="widget  col-1-2 %2$s">',
        'after_widget' => '</div>',
    ));
@@ -237,3 +239,54 @@ function wizardMenuExclude(){
 	//comma seperated list of pages to exclude (check id in html output for clue to id value)
 	return('8');
 }
+
+/**
+ * Get a page by title without the deprecated get_page_by_title().
+ */
+function wizard_get_page_by_title( $page_title ) {
+	$pages = get_posts( array(
+		'post_type'              => 'page',
+		'post_status'            => array( 'publish', 'private' ),
+		'title'                  => $page_title,
+		'posts_per_page'         => 1,
+		'no_found_rows'          => true,
+		'ignore_sticky_posts'    => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+	) );
+	return ! empty( $pages ) ? $pages[0] : null;
+}
+
+/**
+ * Add accessible labels and alt text to the contact form fields.
+ */
+function wizard_contact_form_labels( $form ) {
+	$labels = array(
+		'your-name'    => 'Name (required)',
+		'your-email'   => 'Email (required)',
+		'your-subject' => 'Subject',
+		'your-message' => 'Message',
+	);
+
+	foreach ( $labels as $name => $label ) {
+		$form = preg_replace(
+			'/(<span class="wpcf7-form-control-wrap" data-name="' . $name . '">)(<input[^>]*?)(\/>)/',
+			'$1$2 aria-label="' . $label . '"$3',
+			$form
+		);
+		$form = preg_replace(
+			'/(<span class="wpcf7-form-control-wrap" data-name="' . $name . '">)(<textarea[^>]*?)(>)/',
+			'$1$2 aria-label="' . $label . '"$3',
+			$form
+		);
+	}
+
+	$form = str_replace(
+		'<input id="contact-submit" type="image" name="submit"',
+		'<input id="contact-submit" type="image" name="submit" alt="Send"',
+		$form
+	);
+
+	return $form;
+}
+add_filter( 'wpcf7_form_elements', 'wizard_contact_form_labels' );

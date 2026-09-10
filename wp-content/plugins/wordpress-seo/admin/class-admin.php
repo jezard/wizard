@@ -1,865 +1,385 @@
 <?php
 /**
- * @package Admin
+ * WPSEO plugin file.
+ *
+ * @package WPSEO\Admin
  */
 
-if ( ! defined( 'WPSEO_VERSION' ) ) {
-	header( 'Status: 403 Forbidden' );
-	header( 'HTTP/1.1 403 Forbidden' );
-	exit();
-}
+use Yoast\WP\SEO\Integrations\Settings_Integration;
 
-if ( ! class_exists( 'WPSEO_Admin' ) ) {
+/**
+ * Class that holds most of the admin functionality for Yoast SEO.
+ */
+class WPSEO_Admin {
+
 	/**
-	 * Class that holds most of the admin functionality for WP SEO.
+	 * The page identifier used in WordPress to register the admin page.
+	 *
+	 * !DO NOT CHANGE THIS!
+	 *
+	 * @var string
 	 */
-	class WPSEO_Admin {
+	public const PAGE_IDENTIFIER = 'wpseo_dashboard';
 
-		/**
-		 * Class constructor
-		 */
-		function __construct() {
-			$options = WPSEO_Options::get_all();
+	/**
+	 * Array of classes that add admin functionality.
+	 *
+	 * @var array
+	 */
+	protected $admin_features;
 
-			if ( function_exists( 'is_multisite' ) && is_multisite() && $options['ms_defaults_set'] === false ) {
-				WPSEO_Options::set_multisite_defaults();
-			}
+	/**
+	 * Class constructor.
+	 */
+	public function __construct() {
+		$integrations = [];
 
-			if ( $options['stripcategorybase'] === true ) {
-				add_action( 'created_category', array( $this, 'schedule_rewrite_flush' ) );
-				add_action( 'edited_category', array( $this, 'schedule_rewrite_flush' ) );
-				add_action( 'delete_category', array( $this, 'schedule_rewrite_flush' ) );
-			}
+		global $pagenow;
 
-			// Needs the lower than default priority so other plugins can hook underneath it without issue.
-			add_action( 'admin_menu', array( $this, 'register_settings_page' ), 5 );
-			add_action( 'network_admin_menu', array( $this, 'register_network_settings_page' ) );
+		$wpseo_menu = new WPSEO_Menu();
+		$wpseo_menu->register_hooks();
 
-			add_filter( 'plugin_action_links_' . WPSEO_BASENAME, array( $this, 'add_action_link' ), 10, 2 );
-
-			add_action( 'admin_enqueue_scripts', array( $this, 'config_page_scripts' ) );
-
-			if ( '0' == get_option( 'blog_public' ) ) {
-				add_action( 'admin_footer', array( $this, 'blog_public_warning' ) );
-			}
-
-			if ( ( ( isset( $options['theme_has_description'] ) && $options['theme_has_description'] === true ) || $options['theme_description_found'] !== '' ) && $options['ignore_meta_description_warning'] !== true ) {
-				add_action( 'admin_footer', array( $this, 'meta_description_warning' ) );
-			}
-
-			if ( $options['cleanslugs'] === true ) {
-				add_filter( 'name_save_pre', array( $this, 'remove_stopwords_from_slug' ), 0 );
-			}
-
-			add_action( 'show_user_profile', array( $this, 'user_profile' ) );
-			add_action( 'edit_user_profile', array( $this, 'user_profile' ) );
-			add_action( 'personal_options_update', array( $this, 'process_user_option_update' ) );
-			add_action( 'edit_user_profile_update', array( $this, 'process_user_option_update' ) );
-			add_action( 'personal_options_update', array( $this, 'update_user_profile' ) );
-			add_action( 'edit_user_profile_update', array( $this, 'update_user_profile' ) );
-
-			add_filter( 'user_contactmethods', array( $this, 'update_contactmethods' ), 10, 1 );
-
-			add_action( 'after_switch_theme', array( $this, 'switch_theme' ) );
-			add_action( 'switch_theme', array( $this, 'switch_theme' ) );
-
-			add_filter( 'set-screen-option', array( $this, 'save_bulk_edit_options' ), 10, 3 );
+		if ( is_multisite() ) {
+			WPSEO_Options::maybe_set_multisite_defaults( false );
 		}
 
-		/**
-		 * Schedules a rewrite flush to happen at shutdown
-		 */
-		function schedule_rewrite_flush() {
-			add_action( 'shutdown', 'flush_rewrite_rules' );
+		add_action( 'created_category', [ $this, 'schedule_rewrite_flush' ] );
+		add_action( 'edited_category', [ $this, 'schedule_rewrite_flush' ] );
+		add_action( 'delete_category', [ $this, 'schedule_rewrite_flush' ] );
+
+		add_filter( 'wpseo_accessible_post_types', [ 'WPSEO_Post_Type', 'filter_attachment_post_type' ] );
+
+		add_filter( 'plugin_action_links_' . WPSEO_BASENAME, [ $this, 'add_action_link' ], 10, 2 );
+		add_filter( 'network_admin_plugin_action_links_' . WPSEO_BASENAME, [ $this, 'add_action_link' ], 10, 2 );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'config_page_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_global_style' ] );
+
+		add_action( 'after_switch_theme', [ $this, 'switch_theme' ] );
+		add_action( 'switch_theme', [ $this, 'switch_theme' ] );
+
+		add_filter( 'set-screen-option', [ $this, 'save_bulk_edit_options' ], 10, 3 );
+
+		add_action( 'admin_init', [ 'WPSEO_Plugin_Conflict', 'hook_check_for_plugin_conflicts' ], 10, 1 );
+
+		add_action( 'admin_init', [ $this, 'map_manage_options_cap' ] );
+
+		WPSEO_Sitemaps_Cache::register_clear_on_option_update( 'wpseo' );
+		WPSEO_Sitemaps_Cache::register_clear_on_option_update( 'home' );
+
+		$this->initialize_cornerstone_content();
+
+		if ( WPSEO_Utils::is_plugin_network_active() ) {
+			$integrations[] = new Yoast_Network_Admin();
 		}
 
+		$this->admin_features = [
+			'dashboard_widget'         => new Yoast_Dashboard_Widget(),
+			'wincher_dashboard_widget' => new Wincher_Dashboard_Widget(),
+		];
 
+		if ( WPSEO_Metabox::is_post_overview( $pagenow ) || WPSEO_Metabox::is_post_edit( $pagenow ) ) {
+			$this->admin_features['primary_category'] = new WPSEO_Primary_Term_Admin();
+		}
+
+		$integrations[] = new WPSEO_Yoast_Columns();
+		$integrations[] = new WPSEO_Statistic_Integration();
+		$integrations[] = new WPSEO_Capability_Manager_Integration( WPSEO_Capability_Manager_Factory::get() );
+		$integrations[] = new WPSEO_Admin_Gutenberg_Compatibility_Notification();
+		$integrations[] = new WPSEO_Expose_Shortlinks();
+		$integrations[] = new WPSEO_MyYoast_Proxy();
+		$integrations[] = new WPSEO_Schema_Person_Upgrade_Notification();
+		$integrations[] = new WPSEO_Tracking( 'https://tracking.yoast.com/stats', ( WEEK_IN_SECONDS * 2 ) );
+		$integrations[] = new WPSEO_Admin_Settings_Changed_Listener();
+
+		$integrations = array_merge(
+			$integrations,
+			$this->get_admin_features(),
+			$this->initialize_cornerstone_content(),
+		);
+
+		foreach ( $integrations as $integration ) {
+			$integration->register_hooks();
+		}
+	}
+
+	/**
+	 * Schedules a rewrite flush to happen at shutdown.
+	 *
+	 * @return void
+	 */
+	public function schedule_rewrite_flush() {
+		if ( WPSEO_Options::get( 'stripcategorybase' ) !== true ) {
+			return;
+		}
+
+		// Bail if this is a multisite installation and the site has been switched.
+		if ( is_multisite() && ms_is_switched() ) {
+			return;
+		}
+
+		add_action( 'shutdown', 'flush_rewrite_rules' );
+	}
+
+	/**
+	 * Returns all the classes for the admin features.
+	 *
+	 * @return array
+	 */
+	public function get_admin_features() {
+		return $this->admin_features;
+	}
+
+	/**
+	 * Register assets needed on admin pages.
+	 *
+	 * @deprecated 25.5
+	 * @codeCoverageIgnore
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		_deprecated_function( __METHOD__, 'Yoast SEO 25.5' );
+	}
+
+	/**
+	 * Returns the manage_options capability.
+	 *
+	 * @return string The capability to use.
+	 */
+	public function get_manage_options_cap() {
 		/**
-		 * Register the menu item and its sub menu's.
+		 * Filter: 'wpseo_manage_options_capability' - Allow changing the capability users need to view the settings pages.
 		 *
-		 * @global array $submenu used to change the label on the first item.
+		 * @param string $capability The capability.
 		 */
-		function register_settings_page() {
-			if ( WPSEO_Options::grant_access() !== true ) {
-				return;
-			}
+		return apply_filters( 'wpseo_manage_options_capability', 'wpseo_manage_options' );
+	}
 
-			// Add main page
-			$admin_page = add_menu_page( __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'General Settings', 'wordpress-seo' ), __( 'SEO', 'wordpress-seo' ), 'manage_options', 'wpseo_dashboard', array( $this, 'load_page' ), plugins_url( 'images/yoast-icon.png', WPSEO_FILE ), '99.31337' );
+	/**
+	 * Maps the manage_options cap on saving an options page to wpseo_manage_options.
+	 *
+	 * @return void
+	 */
+	public function map_manage_options_cap() {
+		// phpcs:ignore WordPress.Security -- The variable is only used in strpos and thus safe to not unslash or sanitize.
+		$option_page = ! empty( $_POST['option_page'] ) ? $_POST['option_page'] : '';
 
-			// Sub menu pages
-			$submenu_pages = array(
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Titles &amp; Metas', 'wordpress-seo' ), __( 'Titles &amp; Metas', 'wordpress-seo' ), 'manage_options', 'wpseo_titles', array( $this, 'load_page' ), array( array( $this, 'title_metas_help_tab' ) ) ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Social', 'wordpress-seo' ), __( 'Social', 'wordpress-seo' ), 'manage_options', 'wpseo_social', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'XML Sitemaps', 'wordpress-seo' ), __( 'XML Sitemaps', 'wordpress-seo' ), 'manage_options', 'wpseo_xml', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Permalinks', 'wordpress-seo' ), __( 'Permalinks', 'wordpress-seo' ), 'manage_options', 'wpseo_permalinks', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Internal Links', 'wordpress-seo' ), __( 'Internal Links', 'wordpress-seo' ), 'manage_options', 'wpseo_internal-links', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'RSS', 'wordpress-seo' ), __( 'RSS', 'wordpress-seo' ), 'manage_options', 'wpseo_rss', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Import & Export', 'wordpress-seo' ), __( 'Import & Export', 'wordpress-seo' ), 'manage_options', 'wpseo_import', array( $this, 'load_page' ), null ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Bulk Title Editor', 'wordpress-seo' ), __( 'Bulk Title Editor', 'wordpress-seo' ), 'wpseo_bulk_edit', 'wpseo_bulk-title-editor', array( $this, 'load_page' ), array( array( $this, 'bulk_edit_options' ) ) ),
-					array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Bulk Description Editor', 'wordpress-seo' ), __( 'Bulk Description Editor', 'wordpress-seo' ), 'wpseo_bulk_edit', 'wpseo_bulk-description-editor', array( $this, 'load_page' ), array( array( $this, 'bulk_edit_options' ) ) ),
-			);
+		if ( strpos( $option_page, 'yoast_wpseo' ) === 0 || strpos( $option_page, Settings_Integration::PAGE ) === 0 ) {
+			add_filter( 'option_page_capability_' . $option_page, [ $this, 'get_manage_options_cap' ] );
+		}
+	}
 
-			// Check where to add the edit files page
-			if ( ! ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT ) && ! ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS ) ) {
-				// Make sure on a multi site install only super admins can edit .htaccess and robots.txt
-				if ( ! function_exists( 'is_multisite' ) || ! is_multisite() ) {
-					$submenu_pages[] = array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Edit Files', 'wordpress-seo' ), __( 'Edit Files', 'wordpress-seo' ), 'manage_options', 'wpseo_files', array( $this, 'load_page' ) );
-				}else {
-					$submenu_pages[] = array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Edit Files', 'wordpress-seo' ), __( 'Edit Files', 'wordpress-seo' ), 'delete_users', 'wpseo_files', array( $this, 'load_page' ) );
-				}
-			}
+	/**
+	 * Adds the ability to choose how many posts are displayed per page
+	 * on the bulk edit pages.
+	 *
+	 * @return void
+	 */
+	public function bulk_edit_options() {
+		$option = 'per_page';
+		$args   = [
+			'label'   => __( 'Posts', 'wordpress-seo' ),
+			'default' => 10,
+			'option'  => 'wpseo_posts_per_page',
+		];
+		add_screen_option( $option, $args );
+	}
 
-			// Add Extension submenu page
-			$submenu_pages[] = array( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Extensions', 'wordpress-seo'), __('<span style="color:#f18500">'.__( 'Extensions', 'wordpress-seo' ) .'</span>', 'wordpress-seo' ), 'manage_options', 'wpseo_licenses', array( $this, 'load_page' ), null );
-
-			// Allow submenu pages manipulation
-			$submenu_pages = apply_filters( 'wpseo_submenu_pages', $submenu_pages );
-
-			// Loop through submenu pages and add them
-			if ( count( $submenu_pages ) ) {
-				foreach ( $submenu_pages as $submenu_page ) {
-
-					// Add submenu page
-					$admin_page = add_submenu_page( $submenu_page[0], $submenu_page[1], $submenu_page[2], $submenu_page[3], $submenu_page[4], $submenu_page[5] );
-
-					// Check if we need to hook
-					if ( isset( $submenu_page[6] ) && null != $submenu_page[6] && is_array( $submenu_page[6] ) && count( $submenu_page[6] ) > 0 ) {
-						foreach ( $submenu_page[6] as $submenu_page_action ) {
-							add_action( 'load-' . $admin_page, $submenu_page_action );
-						}
-					}
-				}
-			}
-
-			global $submenu;
-			if ( isset( $submenu['wpseo_dashboard'] ) ) {
-				$submenu['wpseo_dashboard'][0][0] = __( 'Dashboard', 'wordpress-seo' );
-			}
+	/**
+	 * Saves the posts per page limit for bulk edit pages.
+	 *
+	 * @param int    $status Status value to pass through.
+	 * @param string $option Option name.
+	 * @param int    $value  Count value to check.
+	 *
+	 * @return int
+	 */
+	public function save_bulk_edit_options( $status, $option, $value ) {
+		if ( $option && ( $value > 0 && $value < 1000 ) === 'wpseo_posts_per_page' ) {
+			return $value;
 		}
 
-		/**
-		 * Adds contextual help to the titles & metas page.
-		 */
-		function title_metas_help_tab() {
-			$screen = get_current_screen();
+		return $status;
+	}
 
-			$screen->set_help_sidebar(
-					'<p><strong>' . __( 'For more information:' ) . '</strong></p>' .
-					'<p><a target="_blank" href="https://yoast.com/articles/wordpress-seo/#titles">' . __( 'Title optimization', 'wordpress-seo' ) . '</a></p>' .
-					'<p><a target="_blank" href="https://yoast.com/google-page-title/">' . __( 'Why Google won\'t display the right page title', 'wordpress-seo' ) . '</a></p>'
-			);
+	/**
+	 * Adds links to Premium Support and FAQ under the plugin in the plugin overview page.
+	 *
+	 * @param array  $links Array of links for the plugins, adapted when the current plugin is found.
+	 * @param string $file  The filename for the current plugin, which the filter loops through.
+	 *
+	 * @return array
+	 */
+	public function add_action_link( $links, $file ) {
+		$first_time_configuration_notice_helper = YoastSEO()->helpers->first_time_configuration_notice;
 
-			$screen->add_help_tab(
-					array(
-							'id'      => 'basic-help',
-							'title'   => __( 'Template explanation', 'wordpress-seo' ),
-							'content' => '<p>' . __( 'The title &amp; metas settings for WordPress SEO are made up of variables that are replaced by specific values from the page when the page is displayed. The tabs on the left explain the available variables.', 'wordpress-seo' ) . '</p>',
-					)
-			);
-
-			$screen->add_help_tab(
-					array(
-							'id'      => 'title-vars',
-							'title'   => __( 'Basic Variables', 'wordpress-seo' ),
-							'content' => '
-		<h2>' . __( 'Basic Variables', 'wordpress-seo' ) . '</h2>
-			<table class="yoast_help">
-				<tr>
-					<th>%%date%%</th>
-					<td>' . __( 'Replaced with the date of the post/page', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%title%%</th>
-					<td>' . __( 'Replaced with the title of the post/page', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%parent_title%%</th>
-					<td>' . __( 'Replaced with the title of the parent page of the current page', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%sitename%%</th>
-					<td>' . __( 'The site\'s name', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%sitedesc%%</th>
-					<td>' . __( 'The site\'s tagline / description', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%excerpt%%</th>
-					<td>' . __( 'Replaced with the post/page excerpt (or auto-generated if it does not exist)', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%excerpt_only%%</th>
-					<td>' . __( 'Replaced with the post/page excerpt (without auto-generation)', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%tag%%</th>
-					<td>' . __( 'Replaced with the current tag/tags', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%category%%</th>
-					<td>' . __( 'Replaced with the post categories (comma separated)', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%category_description%%</th>
-					<td>' . __( 'Replaced with the category description', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%tag_description%%</th>
-					<td>' . __( 'Replaced with the tag description', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%term_description%%</th>
-					<td>' . __( 'Replaced with the term description', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%term_title%%</th>
-					<td>' . __( 'Replaced with the term name', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%searchphrase%%</th>
-					<td>' . __( 'Replaced with the current search phrase', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%sep%%</th>
-					<td>' . __( 'The separator defined in your theme\'s <code>wp_title()</code> tag.', 'wordpress-seo' ) . '</td>
-				</tr>
-				</table>',
-					)
-			);
-
-			$screen->add_help_tab(
-					array(
-							'id'      => 'title-vars-advanced',
-							'title'   => __( 'Advanced Variables', 'wordpress-seo' ),
-							'content' => '
-				<h2>' . __( 'Advanced Variables', 'wordpress-seo' ) . '</h2>
-				<table class="yoast_help">
-				<tr>
-					<th>%%pt_single%%</th>
-					<td>' . __( 'Replaced with the post type single label', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%pt_plural%%</th>
-					<td>' . __( 'Replaced with the post type plural label', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%modified%%</th>
-					<td>' . __( 'Replaced with the post/page modified time', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%id%%</th>
-					<td>' . __( 'Replaced with the post/page ID', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%name%%</th>
-					<td>' . __( 'Replaced with the post/page author\'s \'nicename\'', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%userid%%</th>
-					<td>' . __( 'Replaced with the post/page author\'s userid', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr class="alt">
-					<th>%%currenttime%%</th>
-					<td>' . __( 'Replaced with the current time', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%currentdate%%</th>
-					<td>' . __( 'Replaced with the current date', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr class="alt">
-					<th>%%currentday%%</th>
-					<td>' . __( 'Replaced with the current day', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%currentmonth%%</th>
-					<td>' . __( 'Replaced with the current month', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr class="alt">
-					<th>%%currentyear%%</th>
-					<td>' . __( 'Replaced with the current year', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%page%%</th>
-					<td>' . __( 'Replaced with the current page number (i.e. page 2 of 4)', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr class="alt">
-					<th>%%pagetotal%%</th>
-					<td>' . __( 'Replaced with the current page total', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%pagenumber%%</th>
-					<td>' . __( 'Replaced with the current page number', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr class="alt">
-					<th>%%caption%%</th>
-					<td>' . __( 'Attachment caption', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%focuskw%%</th>
-					<td>' . __( 'Replaced with the posts focus keyword', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%term404%%</th>
-					<td>' . __( 'Replaced with the slug which caused the 404', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%cf_&lt;custom-field-name&gt;%%</th>
-					<td>' . __( 'Replaced with a posts custom field value', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%ct_&lt;custom-tax-name&gt;%%</th>
-					<td>' . __( 'Replaced with a posts custom taxonomies, comma separated.', 'wordpress-seo' ) . '</td>
-				</tr>
-				<tr>
-					<th>%%ct_desc_&lt;custom-tax-name&gt;%%</th>
-					<td>' . __( 'Replaced with a custom taxonomies description', 'wordpress-seo' ) . '</td>
-				</tr>
-			</table>', //actual help text
-					)
-			);
+		if ( $file === WPSEO_BASENAME && WPSEO_Capability_Utils::current_user_can( 'wpseo_manage_options' ) ) {
+			if ( is_network_admin() ) {
+				$settings_url = network_admin_url( 'admin.php?page=' . self::PAGE_IDENTIFIER );
+			}
+			else {
+				$settings_url = admin_url( 'admin.php?page=' . self::PAGE_IDENTIFIER );
+			}
+			$settings_link = '<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'wordpress-seo' ) . '</a>';
+			array_unshift( $links, $settings_link );
 		}
 
-		/**
-		 * Register the settings page for the Network settings.
-		 */
-		function register_network_settings_page() {
-			if ( WPSEO_Options::grant_access() ) {
-				add_menu_page( __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'MultiSite Settings', 'wordpress-seo' ), __( 'SEO', 'wordpress-seo' ), 'delete_users', 'wpseo_dashboard', array( $this, 'network_config_page' ), plugins_url( 'images/yoast-icon.png', WPSEO_FILE ) );
+		// Add link to docs.
+		$faq_link = '<a href="' . esc_url( WPSEO_Shortlinker::get( 'https://yoa.st/1yc' ) ) . '" target="_blank">' . __( 'FAQ', 'wordpress-seo' ) . '</a>';
+		array_unshift( $links, $faq_link );
 
-				// Add Extension submenu page
-				add_submenu_page( 'wpseo_dashboard', __( 'Yoast WordPress SEO:', 'wordpress-seo' ) . ' ' . __( 'Extensions', 'wordpress-seo'), __('Extensions', 'wordpress-seo' ), 'delete_users', 'wpseo_licenses', array( $this, 'load_page' ) );
-			}
+		if ( $first_time_configuration_notice_helper->first_time_configuration_not_finished() && ! is_network_admin() ) {
+			$configuration_title = ( ! $first_time_configuration_notice_helper->should_show_alternate_message() ) ? 'first-time configuration' : 'SEO configuration';
+			/* translators: CTA to finish the first time configuration. %s: Either first-time SEO configuration or SEO configuration. */
+			$message  = sprintf( __( 'Finish your %s', 'wordpress-seo' ), $configuration_title );
+			$ftc_page = 'admin.php?page=wpseo_dashboard#/first-time-configuration';
+			$ftc_link = '<a href="' . esc_url( admin_url( $ftc_page ) ) . '" target="_blank">' . $message . '</a>';
+			array_unshift( $links, $ftc_link );
 		}
 
+		$addon_manager = new WPSEO_Addon_Manager();
+		if ( YoastSEO()->helpers->product->is_premium() ) {
 
-		/**
-		 * Load the form for a WPSEO admin page
-		 */
-		function load_page() {
-			if ( isset( $_GET['page'] ) ) {
-				switch ( $_GET['page'] ) {
-					case 'wpseo_titles':
-						require_once( WPSEO_PATH . 'admin/pages/metas.php' );
-						break;
+			// Remove Free 'deactivate' link if Premium is active as well. We don't want users to deactivate Free when Premium is active.
+			unset( $links['deactivate'] );
+			$no_deactivation_explanation = '<span style="color: #32373c">' . sprintf(
+				/* translators: %s expands to Yoast SEO Premium. */
+				__( 'Required by %s', 'wordpress-seo' ),
+				'Yoast SEO Premium',
+			) . '</span>';
 
-					case 'wpseo_social':
-						require_once( WPSEO_PATH . 'admin/pages/social.php' );
-						break;
+			array_unshift( $links, $no_deactivation_explanation );
 
-					case 'wpseo_xml':
-						require_once( WPSEO_PATH . 'admin/pages/xml-sitemaps.php' );
-						break;
-
-					case 'wpseo_permalinks':
-						require_once( WPSEO_PATH . 'admin/pages/permalinks.php' );
-						break;
-
-					case 'wpseo_internal-links':
-						require_once( WPSEO_PATH . 'admin/pages/internal-links.php' );
-						break;
-
-					case 'wpseo_rss':
-						require_once( WPSEO_PATH . 'admin/pages/rss.php' );
-						break;
-
-					case 'wpseo_import':
-						require_once( WPSEO_PATH . 'admin/pages/import.php' );
-						break;
-
-					case 'wpseo_files':
-						require_once( WPSEO_PATH . 'admin/pages/files.php' );
-						break;
-
-					case 'wpseo_bulk-title-editor':
-						require_once( WPSEO_PATH . 'admin/pages/bulk-title-editor.php' );
-						break;
-
-					case 'wpseo_bulk-description-editor':
-						require_once( WPSEO_PATH . 'admin/pages/bulk-description-editor.php' );
-						break;
-
-					case 'wpseo_licenses':
-						require_once( WPSEO_PATH . 'admin/pages/licenses.php' );
-						break;
-
-					case 'wpseo_dashboard':
-					default:
-						require_once( WPSEO_PATH . 'admin/pages/dashboard.php' );
-						break;
-				}
-			}
-		}
-
-
-		/**
-		 * Loads the form for the network configuration page.
-		 */
-		function network_config_page() {
-			require_once( WPSEO_PATH . 'admin/pages/network.php' );
-		}
-
-
-		/**
-		 * Adds the ability to choose how many posts are displayed per page
-		 * on the bulk edit pages.
-		 */
-		function bulk_edit_options() {
-			$option = 'per_page';
-			$args   = array(
-					'label'	  => __( 'Posts', 'wordpress-seo' ),
-					'default' => 10,
-					'option'  => 'wpseo_posts_per_page',
-			);
-			add_screen_option( $option, $args );
-		}
-
-		/**
-		 * Saves the posts per page limit for bulk edit pages.
-		 */
-		function save_bulk_edit_options( $status, $option, $value ) {
-			if ( 'wpseo_posts_per_page' === $option && ( $value > 0 && $value < 1000 ) ) {
-				return $value;
-			}
-			return $status;
-		}
-
-		/**
-		 * Display an error message when the blog is set to private.
-		 */
-		function blog_public_warning() {
-			if ( ( function_exists( 'is_network_admin' ) && is_network_admin() ) || WPSEO_Options::grant_access() !== true ) {
-				return;
+			if ( $addon_manager->has_valid_subscription( WPSEO_Addon_Manager::PREMIUM_SLUG ) ) {
+				return $links;
 			}
 
-			$options = get_option( 'wpseo' );
-			if ( $options['ignore_blog_public_warning'] === true ) {
-				return;
-			}
-			echo '<div id="robotsmessage" class="error">';
-			echo '<p><strong>' . __( 'Huge SEO Issue: You\'re blocking access to robots.', 'wordpress-seo' ) . '</strong> ' . sprintf( __( 'You must %sgo to your Reading Settings%s and uncheck the box for Search Engine Visibility.', 'wordpress-seo' ), '<a href="' . esc_url( admin_url( 'options-reading.php' ) ) . '">', '</a>' ) . ' <a href="javascript:wpseo_setIgnore(\'blog_public_warning\',\'robotsmessage\',\'' . esc_js( wp_create_nonce( 'wpseo-ignore' ) ) . '\');" class="button">' . __( 'I know, don\'t bug me.', 'wordpress-seo' ) . '</a></p></div>';
-		}
-
-		/**
-		 * Display an error message when the theme contains a meta description tag.
-		 *
-		 * @since 1.4.14
-		 */
-		function meta_description_warning() {
-			if ( ( function_exists( 'is_network_admin' ) && is_network_admin() ) || WPSEO_Options::grant_access() !== true ) {
-				return;
-			}
-
-			// No need to double display it on the dashboard
-			if ( isset( $_GET['page'] ) && 'wpseo_dashboard' === $_GET['page'] ) {
-				return;
-			}
-
-			$options = get_option( 'wpseo' );
-			if ( true === $options['ignore_meta_description_warning'] ) {
-				return;
-			}
-
-			echo '<div id="metamessage" class="error">';
-			echo '<p><strong>' . __( 'SEO Issue:', 'wordpress-seo' ) . '</strong> ' . sprintf( __( 'Your theme contains a meta description, which blocks WordPress SEO from working properly. Please visit the %sSEO Dashboard%s to fix this.', 'wordpress-seo' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_dashboard' ) ) . '">', '</a>' ) . ' <a href="javascript:wpseo_setIgnore(\'meta_description_warning\',\'metamessage\',\'' . esc_js( wp_create_nonce( 'wpseo-ignore' ) ) . '\');" class="button">' . __( 'I know, don\'t bug me.', 'wordpress-seo' ) . '</a></p></div>';
-		}
-
-		/**
-		 * Add a link to the settings page to the plugins list
-		 *
-		 * @staticvar string $this_plugin holds the directory & filename for the plugin
-		 *
-		 * @param	array	$links array of links for the plugins, adapted when the current plugin is found.
-		 * @param	string	$file  the filename for the current plugin, which the filter loops through.
-		 * @return	array	$links
-		 */
-		function add_action_link( $links, $file ) {
-			if ( WPSEO_BASENAME === $file && WPSEO_Options::grant_access() ) {
-				$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_dashboard' ) ) . '">' . __( 'Settings', 'wordpress-seo' ) . '</a>';
-				array_unshift( $links, $settings_link );
-			}
-
-			if ( class_exists( 'Yoast_Product_WPSEO_Premium' ) ) {
-				$license_manager = new Yoast_Plugin_License_Manager( new Yoast_Product_WPSEO_Premium() );
-				if ( $license_manager->license_is_valid() ) {
-					return $links;
-				}
-			}
-
-			// add link to premium support landing page
-			$premium_link = '<a href="https://yoast.com/wordpress/plugins/seo-premium/support/#utm_source=wordpress-seo-settings-link&utm_medium=text-link&utm_campaign=support-link">' . __( 'Premium Support', 'wordpress-seo' ) .'</a>';
-			array_unshift( $links, $premium_link );
-
-			// add link to docs
-			$faq_link = '<a href="https://yoast.com/wordpress/plugins/seo/faq/">' . __( 'FAQ', 'wordpress-seo' ) .'</a>';
-			array_unshift( $links, $faq_link );
+			// Add link to where premium can be activated.
+			$activation_link = '<a style="font-weight: bold;" href="' . esc_url( WPSEO_Shortlinker::get( 'https://yoa.st/activate-my-yoast' ) ) . '" target="_blank">' . __( 'Activate your subscription', 'wordpress-seo' ) . '</a>';
+			array_unshift( $links, $activation_link );
 
 			return $links;
 		}
 
-		/**
-		 * Enqueues the (tiny) global JS needed for the plugin.
-		 */
-		function config_page_scripts() {
-			if ( WPSEO_Options::grant_access() ) {
-				wp_enqueue_script( 'wpseo-admin-global-script', plugins_url( 'js/wp-seo-admin-global' . WPSEO_CSSJS_SUFFIX . '.js', WPSEO_FILE ), array( 'jquery' ), WPSEO_VERSION, true );
+		// Add link to premium landing page.
+		$premium_link = '<a style="font-weight: bold;" href="' . esc_url( WPSEO_Shortlinker::get( 'https://yoa.st/1yb' ) ) . '" target="_blank" data-action="load-nfd-ctb" data-ctb-id="f6a84663-465f-4cb5-8ba5-f7a6d72224b2">' . __( 'Get Premium', 'wordpress-seo' ) . '</a>';
+		array_unshift( $links, $premium_link );
+
+		return $links;
+	}
+
+	/**
+	 * Enqueues the (tiny) global JS needed for the plugin.
+	 *
+	 * @return void
+	 */
+	public function config_page_scripts() {
+		$asset_manager = new WPSEO_Admin_Asset_Manager();
+		$asset_manager->enqueue_script( 'admin-global' );
+		$asset_manager->localize_script( 'admin-global', 'wpseoAdminGlobalL10n', $this->localize_admin_global_script() );
+	}
+
+	/**
+	 * Enqueues the (tiny) global stylesheet needed for the plugin.
+	 *
+	 * @return void
+	 */
+	public function enqueue_global_style() {
+		$asset_manager = new WPSEO_Admin_Asset_Manager();
+		$asset_manager->enqueue_style( 'admin-global' );
+	}
+
+	/**
+	 * Filter the $contactmethods array and add a set of social profiles.
+	 *
+	 * These are used with the Facebook author, rel="author" and Twitter cards implementation.
+	 *
+	 * @deprecated 22.6
+	 * @codeCoverageIgnore
+	 *
+	 * @param array<string, string> $contactmethods Currently set contactmethods.
+	 *
+	 * @return array<string, string> Contactmethods with added contactmethods.
+	 */
+	public function update_contactmethods( $contactmethods ) {
+		_deprecated_function( __METHOD__, 'Yoast SEO 22.6' );
+
+		$contactmethods['facebook']   = __( 'Facebook profile URL', 'wordpress-seo' );
+		$contactmethods['instagram']  = __( 'Instagram profile URL', 'wordpress-seo' );
+		$contactmethods['linkedin']   = __( 'LinkedIn profile URL', 'wordpress-seo' );
+		$contactmethods['myspace']    = __( 'MySpace profile URL', 'wordpress-seo' );
+		$contactmethods['pinterest']  = __( 'Pinterest profile URL', 'wordpress-seo' );
+		$contactmethods['soundcloud'] = __( 'SoundCloud profile URL', 'wordpress-seo' );
+		$contactmethods['tumblr']     = __( 'Tumblr profile URL', 'wordpress-seo' );
+		$contactmethods['twitter']    = __( 'X username (without @)', 'wordpress-seo' );
+		$contactmethods['youtube']    = __( 'YouTube profile URL', 'wordpress-seo' );
+		$contactmethods['wikipedia']  = __( 'Wikipedia page about you', 'wordpress-seo' ) . '<br/><small>' . __( '(if one exists)', 'wordpress-seo' ) . '</small>';
+
+		return $contactmethods;
+	}
+
+	/**
+	 * Log the updated timestamp for user profiles when theme is changed.
+	 *
+	 * @return void
+	 */
+	public function switch_theme() {
+
+		$users = get_users( [ 'capability' => [ 'edit_posts' ] ] );
+
+		if ( is_array( $users ) && $users !== [] ) {
+			foreach ( $users as $user ) {
+				update_user_meta( $user->ID, '_yoast_wpseo_profile_updated', time() );
 			}
 		}
+	}
 
+	/**
+	 * Localization for the dismiss urls.
+	 *
+	 * @return array
+	 */
+	private function localize_admin_global_script() {
+		return array_merge(
+			[
+				'isRtl'                   => is_rtl(),
+				'variable_warning'        => sprintf(
+				/* translators: %1$s: '%%term_title%%' variable used in titles and meta's template that's not compatible with the given template, %2$s: expands to 'HelpScout beacon' */
+					__( 'Warning: the variable %1$s cannot be used in this template. See the %2$s for more info.', 'wordpress-seo' ),
+					'<code>%s</code>',
+					'HelpScout beacon',
+				),
+				/* translators: %s: expends to Yoast SEO */
+				'help_video_iframe_title' => sprintf( __( '%s video tutorial', 'wordpress-seo' ), 'Yoast SEO' ),
+				'scrollable_table_hint'   => __( 'Scroll to see the table content.', 'wordpress-seo' ),
+				'wincher_is_logged_in'    => WPSEO_Options::get( 'wincher_integration_active', true ) ? YoastSEO()->helpers->wincher->login_status() : false,
+			],
+			YoastSEO()->helpers->wincher->get_admin_global_links(),
+		);
+	}
 
-		/**
-		 * Updates the user metas that (might) have been set on the user profile page.
-		 *
-		 * @param    int    $user_id of the updated user
-		 */
-		function process_user_option_update( $user_id ) {
-			if ( isset( $_POST['wpseo_author_title'] ) ) {
-				check_admin_referer( 'wpseo_user_profile_update', 'wpseo_nonce' );
-				update_user_meta( $user_id, 'wpseo_title', ( isset( $_POST['wpseo_author_title'] ) ? WPSEO_Option::sanitize_text_field( $_POST['wpseo_author_title'] ) : '' ) );
-				update_user_meta( $user_id, 'wpseo_metadesc', ( isset( $_POST['wpseo_author_metadesc'] ) ? WPSEO_Option::sanitize_text_field( $_POST['wpseo_author_metadesc'] ) : '' ) );
-				update_user_meta( $user_id, 'wpseo_metakey', ( isset( $_POST['wpseo_author_metakey'] ) ? WPSEO_Option::sanitize_text_field( $_POST['wpseo_author_metakey'] ) : '' ) );
-			}
+	/**
+	 * Whether we are on the admin dashboard page.
+	 *
+	 * @return bool
+	 */
+	protected function on_dashboard_page() {
+		return $GLOBALS['pagenow'] === 'index.php';
+	}
+
+	/**
+	 * Loads the cornerstone filter.
+	 *
+	 * @return WPSEO_WordPress_Integration[] The integrations to initialize.
+	 */
+	protected function initialize_cornerstone_content() {
+		if ( ! WPSEO_Options::get( 'enable_cornerstone_content' ) ) {
+			return [];
 		}
 
-		/**
-		 * Filter the $contactmethods array and add Facebook, Google+ and Twitter.
-		 *
-		 * These are used with the Facebook author, rel="author" and Twitter cards implementation.
-		 *
-		 * @param	array	$contactmethods currently set contactmethods.
-		 * @return	array	$contactmethods with added contactmethods.
-		 */
-		function update_contactmethods( $contactmethods ) {
-			// Add Google+
-			$contactmethods['googleplus'] = __( 'Google+', 'wordpress-seo' );
-			// Add Twitter
-			$contactmethods['twitter'] = __( 'Twitter username (without @)', 'wordpress-seo' );
-			// Add Facebook
-			$contactmethods['facebook'] = __( 'Facebook profile URL', 'wordpress-seo' );
-
-			return $contactmethods;
-		}
-
-		/**
-		 * Add the inputs needed for SEO values to the User Profile page
-		 *
-		 * @param	object	$user
-		 */
-		function user_profile( $user ) {
-
-			if ( ! current_user_can( 'edit_users' ) )
-				return;
-
-			$options = WPSEO_Options::get_all();
-
-			wp_nonce_field( 'wpseo_user_profile_update', 'wpseo_nonce' );
-			?>
-			<h3 id="wordpress-seo"><?php _e( 'WordPress SEO settings', 'wordpress-seo' ); ?></h3>
-			<table class="form-table">
-				<tr>
-					<th><label for="wpseo_author_title"><?php _e( 'Title to use for Author page', 'wordpress-seo' ); ?></label></th>
-					<td><input class="regular-text" type="text" id="wpseo_author_title" name="wpseo_author_title"
-										 value="<?php echo esc_attr( get_the_author_meta( 'wpseo_title', $user->ID ) ); ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="wpseo_author_metadesc"><?php _e( 'Meta description to use for Author page', 'wordpress-seo' ); ?></label></th>
-					<td><textarea rows="3" cols="30" id="wpseo_author_metadesc" name="wpseo_author_metadesc"><?php echo esc_textarea( get_the_author_meta( 'wpseo_metadesc', $user->ID ) ); ?></textarea>
-					</td>
-				</tr>
-				<?php if ( $options['usemetakeywords'] === true ) { ?>
-					<tr>
-						<th><label for="wpseo_author_metakey"><?php _e( 'Meta keywords to use for Author page', 'wordpress-seo' ); ?></label></th>
-						<td><input class="regular-text" type="text" id="wpseo_author_metakey" name="wpseo_author_metakey" value="<?php echo esc_attr( get_the_author_meta( 'wpseo_metakey', $user->ID ) ); ?>" /></td>
-					</tr>
-				<?php } ?>
-			</table>
-			<br /><br />
-		<?php
-		}
-
-		/**
-		 * Cleans stopwords out of the slug, if the slug hasn't been set yet.
-		 *
-		 * @since 1.1.7
-		 *
-		 * @param string $slug if this isn't empty, the function will return an unaltered slug.
-		 *
-		 * @return string $clean_slug cleaned slug
-		 */
-		function remove_stopwords_from_slug( $slug ) {
-			// Don't change an existing slug
-			if ( isset( $slug ) && $slug !== '' ) {
-				return $slug;
-			}
-
-			if ( ! isset( $_POST['post_title'] ) ) {
-				return $slug;
-			}
-
-			// Lowercase the slug and strip slashes
-			$clean_slug = sanitize_title( stripslashes( $_POST['post_title'] ) );
-
-			// Turn it to an array and strip stopwords by comparing against an array of stopwords
-			$clean_slug_array = array_diff( explode( '-', $clean_slug ), $this->stopwords() );
-
-			// Turn the sanitized array into a string
-			$clean_slug = join( '-', $clean_slug_array );
-
-			return $clean_slug;
-		}
-
-		/**
-		 * Returns the stopwords for the current language
-		 *
-		 * @since 1.1.7
-		 *
-		 * @return array $stopwords array of stop words to check and / or remove from slug
-		 */
-		function stopwords() {
-			/* translators: this should be an array of stopwords for your language, separated by comma's. */
-			$stopwords = explode( ',', __( "a,about,above,after,again,against,all,am,an,and,any,are,aren't,as,at,be,because,been,before,being,below,between,both,but,by,can't,cannot,could,couldn't,did,didn't,do,does,doesn't,doing,don't,down,during,each,few,for,from,further,had,hadn't,has,hasn't,have,haven't,having,he,he'd,he'll,he's,her,here,here's,hers,herself,him,himself,his,how,how's,i,i'd,i'll,i'm,i've,if,in,into,is,isn't,it,it's,its,itself,let's,me,more,most,mustn't,my,myself,no,nor,not,of,off,on,once,only,or,other,ought,our,ours,ourselves,out,over,own,same,shan't,she,she'd,she'll,she's,should,shouldn't,so,some,such,than,that,that's,the,their,theirs,them,themselves,then,there,there's,these,they,they'd,they'll,they're,they've,this,those,through,to,too,under,until,up,very,was,wasn't,we,we'd,we'll,we're,we've,were,weren't,what,what's,when,when's,where,where's,which,while,who,who's,whom,why,why's,with,won't,would,wouldn't,you,you'd,you'll,you're,you've,your,yours,yourself,yourselves", 'wordpress-seo' ) );
-
-			/**
-			 * Allows filtering of the stop words list
-			 * Especially useful for users on a language in which WPSEO is not available yet
-			 * and/or users who want to turn off stop word filtering
-			 * @api  array  $stopwords  Array of all lowercase stopwords to check and/or remove from slug
-			 */
-			$stopwords = apply_filters( 'wpseo_stopwords', $stopwords );
-
-			return $stopwords;
-		}
-
-
-		/**
-		 * Check whether the stopword appears in the string
-		 *
-		 * @param string $haystack    The string to be checked for the stopword
-		 * @param bool   $checkingUrl Whether or not we're checking a URL
-		 *
-		 * @return bool|mixed
-		 */
-		function stopwords_check( $haystack, $checkingUrl = false ) {
-			$stopWords = $this->stopwords();
-
-			if ( is_array( $stopWords ) && $stopWords !== array() ) {
-				foreach ( $stopWords as $stopWord ) {
-					// If checking a URL remove the single quotes
-					if ( $checkingUrl )
-						$stopWord = str_replace( "'", '', $stopWord );
-
-					// Check whether the stopword appears as a whole word
-					// @todo [JRF => whomever] check whether the use of \b (=word boundary) would be more efficient ;-)
-					$res = preg_match( "`(^|[ \n\r\t\.,'\(\)\"\+;!?:])" . preg_quote( $stopWord, '`' ) . "($|[ \n\r\t\.,'\(\)\"\+;!?:])`iu", $haystack, $match );
-					if ( $res > 0 )
-						return $stopWord;
-				}
-			}
-
-			return false;
-		}
-
-		/**
-		 * Log the timestamp when a user profile has been updated
-		 */
-		function update_user_profile( $user_id ) {
-			if ( current_user_can( 'edit_user', $user_id ) ) {
-				update_user_meta( $user_id, '_yoast_wpseo_profile_updated', time() );
-			}
-		}
-
-		/**
-		 * Log the updated timestamp for user profiles when theme is changed
-		 */
-		function switch_theme() {
-			$users = get_users( array( 'who' => 'authors' ) );
-			if ( is_array( $users ) && $users !== array() ) {
-				foreach ( $users as $user ) {
-					update_user_meta( $user->ID, '_yoast_wpseo_profile_updated', time() );
-				}
-			}
-		}
-
-
-
-
-		/********************** DEPRECATED METHODS **********************/
-
-		/**
-		 * Check whether the current user is allowed to access the configuration.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Options::grant_access()
-		 * @see WPSEO_Options::grant_access()
-		 *
-		 * @return boolean
-		 */
-		function grant_access() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Options::grant_access()' );
-			return WPSEO_Options::grant_access();
-		}
-
-		/**
-		 * Check whether the current user is allowed to access the configuration.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use wpseo_do_upgrade()
-		 * @see wpseo_do_upgrade()
-		 *
-		 * @return boolean
-		 */
-		function maybe_upgrade() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'wpseo_do_upgrade' );
-			wpseo_do_upgrade();
-		}
-
-		/**
-		 * Clears the cache
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Options::clear_cache()
-		 * @see WPSEO_Options::clear_cache()
-		 */
-		function clear_cache() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Options::clear_cache()' );
-			WPSEO_Options::clear_cache();
-		}
-
-		/**
-		 * Clear rewrites
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Options::clear_rewrites()
-		 * @see WPSEO_Options::clear_rewrites()
-		 */
-		function clear_rewrites() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Options::clear_rewrites()' );
-			WPSEO_Options::clear_rewrites();
-		}
-
-		/**
-		 * Register all the options needed for the configuration pages.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Option::register_setting() on each individual option
-		 * @see WPSEO_Option::register_setting()
-		 */
-		function options_init() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Option::register_setting()' );
-		}
-
-		/**
-		 * Initialize default values for a new multisite blog.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Options::set_multisite_defaults()
-		 * @see WPSEO_Options::set_multisite_defaults()
-		 */
-		function multisite_defaults() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Options::set_multisite_defaults()' );
-			WPSEO_Options::set_multisite_defaults();
-		}
-
-		/**
-		 * Loads the form for the import/export page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function import_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the titles & metas page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function titles_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the permalinks page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function permalinks_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the internal links / breadcrumbs page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function internallinks_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the file edit page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function files_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the RSS page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function rss_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the XML Sitemaps page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function xml_sitemaps_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the Dashboard page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function config_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-		/**
-		 * Loads the form for the Social Settings page.
-		 *
-		 * @deprecated 1.5.0
-		 * @deprecated use WPSEO_Admin::load_page()
-		 */
-		function social_page() {
-			_deprecated_function( __CLASS__ . '::' . __METHOD__, 'WPSEO 1.5.0', 'WPSEO_Admin::load_page()' );
-			$this->load_page();
-		}
-
-	} /* End of class */
-
-} /* End of class-exists wrapper */
+		return [
+			'cornerstone_filter' => new WPSEO_Cornerstone_Filter(),
+		];
+	}
+}

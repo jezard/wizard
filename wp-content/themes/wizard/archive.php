@@ -139,6 +139,7 @@ get_header(); ?>
 		<div class="nav-tab-content">
 			<?php get_sidebar(); ?>
 			<form id="more-pages" action="<?php bloginfo('url'); ?>" method="get">
+		   		<label for="page_id">View page:</label>
 		   		<?php wp_dropdown_pages('exclude='.wizardMenuExclude()); ?>
 		   		<input type="submit" name="submit" value="View page" />
 		   </form>

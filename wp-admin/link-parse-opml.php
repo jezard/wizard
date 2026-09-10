@@ -6,89 +6,100 @@
  * @subpackage Administration
  */
 
-if ( ! defined('ABSPATH') )
-	die();
-
-global $opml, $map;
-
-// columns we wish to find are: link_url, link_name, link_target, link_description
-// we need to map XML attribute names to our columns
-$opml_map = array('URL'         => 'link_url',
-	'HTMLURL'     => 'link_url',
-	'TEXT'        => 'link_name',
-	'TITLE'       => 'link_name',
-	'TARGET'      => 'link_target',
-	'DESCRIPTION' => 'link_description',
-	'XMLURL'      => 'link_rss'
-);
-
-$map = $opml_map;
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- * XML callback function for the start of a new XML tag.
+ * @global string $opml
+ */
+global $opml;
+
+/**
+ * Starts a new XML tag.
+ *
+ * Callback function for xml_set_element_handler().
  *
  * @since 0.71
  * @access private
  *
- * @uses $updated_timestamp Not used inside function.
- * @uses $all_links Not used inside function.
- * @uses $map Stores names of attributes to use.
  * @global array $names
  * @global array $urls
  * @global array $targets
  * @global array $descriptions
  * @global array $feeds
  *
- * @param mixed $parser XML Parser resource.
- * @param string $tagName XML element name.
- * @param array $attrs XML element attributes.
+ * @param resource $parser   XML Parser resource.
+ * @param string   $tag_name XML element name.
+ * @param array    $attrs    XML element attributes.
  */
-function startElement($parser, $tagName, $attrs) {
-	global $updated_timestamp, $all_links, $map;
+function startElement( $parser, $tag_name, $attrs ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	global $names, $urls, $targets, $descriptions, $feeds;
 
-	if ($tagName == 'OUTLINE') {
-		foreach (array_keys($map) as $key) {
-			if (isset($attrs[$key])) {
-				$$map[$key] = $attrs[$key];
-			}
+	if ( 'OUTLINE' === $tag_name ) {
+		$name = '';
+		if ( isset( $attrs['TEXT'] ) ) {
+			$name = $attrs['TEXT'];
+		}
+		if ( isset( $attrs['TITLE'] ) ) {
+			$name = $attrs['TITLE'];
+		}
+		$url = '';
+		if ( isset( $attrs['URL'] ) ) {
+			$url = $attrs['URL'];
+		}
+		if ( isset( $attrs['HTMLURL'] ) ) {
+			$url = $attrs['HTMLURL'];
 		}
 
-		//echo("got data: link_url = [$link_url], link_name = [$link_name], link_target = [$link_target], link_description = [$link_description]<br />\n");
-
-		// save the data away.
-		$names[] = $link_name;
-		$urls[] = $link_url;
-		$targets[] = $link_target;
-		$feeds[] = $link_rss;
-		$descriptions[] = $link_description;
-	} // end if outline
+		// Save the data away.
+		$names[]        = $name;
+		$urls[]         = $url;
+		$targets[]      = $attrs['TARGET'] ?? '';
+		$feeds[]        = $attrs['XMLURL'] ?? '';
+		$descriptions[] = $attrs['DESCRIPTION'] ?? '';
+	} // End if outline.
 }
 
 /**
- * XML callback function that is called at the end of a XML tag.
+ * Ends a new XML tag.
+ *
+ * Callback function for xml_set_element_handler().
  *
  * @since 0.71
  * @access private
  *
- * @param mixed $parser XML Parser resource.
- * @param string $tagName XML tag name.
+ * @param resource $parser   XML Parser resource.
+ * @param string   $tag_name XML tag name.
  */
-function endElement($parser, $tagName) {
-	// nothing to do.
+function endElement( $parser, $tag_name ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
+	// Nothing to do.
 }
 
-// Create an XML parser
+// Create an XML parser.
+if ( ! function_exists( 'xml_parser_create' ) ) {
+	wp_trigger_error( '', __( "PHP's XML extension is not available. Please contact your hosting provider to enable PHP's XML extension." ) );
+	wp_die( __( "PHP's XML extension is not available. Please contact your hosting provider to enable PHP's XML extension." ) );
+}
+
 $xml_parser = xml_parser_create();
 
-// Set the functions to handle opening and closing tags
-xml_set_element_handler($xml_parser, "startElement", "endElement");
+// Set the functions to handle opening and closing tags.
+xml_set_element_handler( $xml_parser, 'startElement', 'endElement' );
 
-if (!xml_parse($xml_parser, $opml, true)) {
-	echo(sprintf(__('XML error: %1$s at line %2$s'),
-	xml_error_string(xml_get_error_code($xml_parser)),
-	xml_get_current_line_number($xml_parser)));
+if ( ! xml_parse( $xml_parser, $opml, true ) ) {
+	printf(
+		/* translators: 1: Error message, 2: Line number. */
+		__( 'XML Error: %1$s at line %2$s' ),
+		xml_error_string( xml_get_error_code( $xml_parser ) ),
+		xml_get_current_line_number( $xml_parser )
+	);
 }
 
-// Free up memory used by the XML parser
-xml_parser_free($xml_parser);
+if ( PHP_VERSION_ID < 80000 ) { // xml_parser_free() has no effect as of PHP 8.0.
+	// Free up memory used by the XML parser.
+	xml_parser_free( $xml_parser );
+}
+
+unset( $xml_parser );
