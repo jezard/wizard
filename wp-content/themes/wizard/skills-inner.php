@@ -9,8 +9,7 @@
 					$page_title = 'Skills';
 					echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
 					echo '<div class="section-break"></div>';
-					$pager = get_page_by_title( $page_title );
-
+					$pager = wizard_get_page_by_title( $page_title );
 				?>
 
 				<?php
@@ -40,6 +39,9 @@
 				<?php $wp_query = null; ?>
 				<?php $wp_query = new WP_Query(); ?>
 				<?php $wp_query->query($args); 	?>
+
+				<?php $the_last_page = $wp_query->max_num_pages; ?>
+				<?php $loaded_page = intval($paged); ?>
 
 				<?php if ( have_posts() ) : while (have_posts()) : the_post(); ?>
 

@@ -9,7 +9,7 @@
 					$page_title = 'Work';
 					echo '<header class="entry-header"><h1 class="entry-title">'.$page_title.'</h1></header>';
 					echo '<div class="section-break"></div>';
-					$pager = get_page_by_title( $page_title );
+					$pager = wizard_get_page_by_title( $page_title );
 
 				?>
 

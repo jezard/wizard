@@ -86,11 +86,13 @@ function wizard_widgets_init() {
 	) );
 	register_sidebar(array(
        'name'=>'Footer Widgets',
+       'id' => 'footer-widgets',
        'before_widget' => '<div id="%1$s" class="widget subfooter col-1-4 %2$s">',
        'after_widget' => '</div>',
    ));
    register_sidebar(array(
        'name'=>'Footer legal',
+       'id' => 'footer-legal',
        'before_widget' => '<div id="%1$s" class="widget  col-1-2 %2$s">',
        'after_widget' => '</div>',
    ));
@@ -236,4 +238,21 @@ if ( function_exists( 'add_image_size' ) ) {
 function wizardMenuExclude(){
 	//comma seperated list of pages to exclude (check id in html output for clue to id value)
 	return('8');
+}
+
+/**
+ * Get a page by title without the deprecated get_page_by_title().
+ */
+function wizard_get_page_by_title( $page_title ) {
+	$pages = get_posts( array(
+		'post_type'              => 'page',
+		'post_status'            => array( 'publish', 'private' ),
+		'title'                  => $page_title,
+		'posts_per_page'         => 1,
+		'no_found_rows'          => true,
+		'ignore_sticky_posts'    => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+	) );
+	return ! empty( $pages ) ? $pages[0] : null;
 }

@@ -20,7 +20,7 @@ get_header(); ?>
 					$page_title = 'Services';
 					echo '<header class="entry-header col-1-1"><h1 class="entry-title services-title">'.$page_title.'</h1></header>';
 					echo '<div class="section-break"></div>';
-					$page = get_page_by_title( $page_title );
+					$page = wizard_get_page_by_title( $page_title );
 					$content = apply_filters('the_content', $page->post_content); 
 					echo $content; 
 				?>
@@ -42,7 +42,7 @@ get_header(); ?>
 						$page_title = 'About';
 						echo '<header class="entry-header  col-1-1"><h1 class="entry-title lightest-text">'.$page_title.'</h1></header>';
 						echo '<div class="section-break"></div>';
-						$page = get_page_by_title( $page_title );
+						$page = wizard_get_page_by_title( $page_title );
 						$content = apply_filters('the_content', $page->post_content); 
 						echo $content; 
 						echo '<div class="section-break"></div>';
@@ -59,7 +59,7 @@ get_header(); ?>
 						$page_title = 'Contact';
 						echo '<header class="entry-header"><h1 class="entry-title  col-1-1">'.$page_title.'</h1></header>';
 						echo '<div class="section-break"></div>';
-						$page = get_page_by_title( $page_title );
+						$page = wizard_get_page_by_title( $page_title );
 						$content = apply_filters('the_content', $page->post_content); 
 						echo $content; 
 						echo '<div class="section-break"></div>';

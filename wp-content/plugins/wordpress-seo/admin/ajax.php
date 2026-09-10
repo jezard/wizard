@@ -1,6 +1,8 @@
 <?php
 /**
- * @package Admin
+ * WPSEO plugin file.
+ *
+ * @package WPSEO\Admin
  */
 
 if ( ! defined( 'WPSEO_VERSION' ) ) {
@@ -10,150 +12,166 @@ if ( ! defined( 'WPSEO_VERSION' ) ) {
 }
 
 /**
+ * Convenience function to JSON encode and echo results and then die.
+ *
+ * @param array $results Results array for encoding.
+ *
+ * @return void
+ */
+function wpseo_ajax_json_echo_die( $results ) {
+	// phpcs:ignore WordPress.Security.EscapeOutput -- Reason: WPSEO_Utils::format_json_encode is safe.
+	echo WPSEO_Utils::format_json_encode( $results );
+	exit();
+}
+
+/**
  * Function used from AJAX calls, takes it variables from $_POST, dies on exit.
+ *
+ * @return void
  */
 function wpseo_set_option() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		die( '-1' );
+		exit( '-1' );
 	}
 
 	check_ajax_referer( 'wpseo-setoption' );
 
-	$option = sanitize_text_field( $_POST['option'] );
+	if ( ! isset( $_POST['option'] ) || ! is_string( $_POST['option'] ) ) {
+		exit( '-1' );
+	}
+
+	$option = sanitize_text_field( wp_unslash( $_POST['option'] ) );
 	if ( $option !== 'page_comments' ) {
-		die( '-1' );
+		exit( '-1' );
 	}
 
 	update_option( $option, 0 );
-	die( '1' );
+	exit( '1' );
 }
 
 add_action( 'wp_ajax_wpseo_set_option', 'wpseo_set_option' );
 
 /**
+ * Since 3.2 Notifications are dismissed in the Notification Center.
+ */
+add_action( 'wp_ajax_yoast_dismiss_notification', [ 'Yoast_Notification_Center', 'ajax_dismiss_notification' ] );
+
+/**
  * Function used to remove the admin notices for several purposes, dies on exit.
+ *
+ * @return void
  */
 function wpseo_set_ignore() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		die( '-1' );
+		exit( '-1' );
 	}
 
 	check_ajax_referer( 'wpseo-ignore' );
 
-	$options                          = get_option( 'wpseo' );
-	$ignore_key 					  = sanitize_text_field( $_POST['option'] );
-	$options['ignore_' . $ignore_key] = true;
-	update_option( 'wpseo', $options );
-	die( '1' );
+	if ( ! isset( $_POST['option'] ) || ! is_string( $_POST['option'] ) ) {
+		exit( '-1' );
+	}
+
+	$ignore_key = sanitize_text_field( wp_unslash( $_POST['option'] ) );
+	WPSEO_Options::set( 'ignore_' . $ignore_key, true );
+
+	exit( '1' );
 }
 
 add_action( 'wp_ajax_wpseo_set_ignore', 'wpseo_set_ignore' );
 
 /**
- * Function used to delete blocking files, dies on exit.
- */
-function wpseo_kill_blocking_files() {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		die( '-1' );
-	}
-
-	check_ajax_referer( 'wpseo-blocking-files' );
-
-	$message = 'There were no files to delete.';
-	$options = get_option( 'wpseo' );
-	if ( is_array( $options['blocking_files'] ) && $options['blocking_files'] !== array() ) {
-		$message = 'success';
-		$files_removed = 0;
-		foreach ( $options['blocking_files'] as $k => $file ) {
-			if ( ! @unlink( $file ) ) {
-				$message = __( 'Some files could not be removed. Please remove them via FTP.', 'wordpress-seo' );
-			}
-			else {
-				unset( $options['blocking_files'][$k] );
-				$files_removed++;
-			}
-		}
-		if ( $files_removed > 0 ) {
-			update_option( 'wpseo', $options );
-		}
-	}
-
-	die( $message );
-}
-
-add_action( 'wp_ajax_wpseo_kill_blocking_files', 'wpseo_kill_blocking_files' );
-
-/**
- * Retrieve the suggestions from the Google Suggest API and return them to be
- * used in the suggest box within the plugin. Dies on exit.
- */
-function wpseo_get_suggest() {
-	check_ajax_referer( 'wpseo-get-suggest' );
-
-	$term   = urlencode( $_GET['term'] );
-	$result = wp_remote_get( 'https://www.google.com/complete/search?output=toolbar&q=' . $term );
-
-	$return_arr = array();
-
-	if ( ! is_wp_error( $result ) ) {
-		preg_match_all( '`suggestion data="([^"]+)"/>`u', $result['body'], $matches );
-
-		if ( isset( $matches[1] ) && ( is_array( $matches[1] ) && $matches[1] !== array() ) ) {
-			foreach ( $matches[1] as $match ) {
-				$return_arr[] = html_entity_decode( $match, ENT_COMPAT, 'UTF-8' );
-			}
-		}
-	}
-	echo json_encode( $return_arr );
-	die();
-}
-
-add_action( 'wp_ajax_wpseo_get_suggest', 'wpseo_get_suggest' );
-
-/**
  * Save an individual SEO title from the Bulk Editor.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @return void
  */
 function wpseo_save_title() {
-
-	$new_title      = $_POST['new_title'] ;
-	$id             = intval( $_POST['wpseo_post_id'] );
-	$original_title = $_POST['existing_title'];
-
-	$results = wpseo_upsert_new_title( $id, $new_title, $original_title );
-
-	echo json_encode( $results );
-	die();
+	_deprecated_function( __FUNCTION__, 'Yoast SEO 28.1' );
+	wpseo_save_what( 'title' );
 }
 
 add_action( 'wp_ajax_wpseo_save_title', 'wpseo_save_title' );
 
 /**
- * Helper function for updating an existing seo title or create a new one
- * if it doesn't already exist.
+ * Save an individual meta description from the Bulk Editor.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @return void
  */
-function wpseo_upsert_new_title( $post_id, $new_title, $original_title ) {
+function wpseo_save_description() {
+	_deprecated_function( __FUNCTION__, 'Yoast SEO 28.1' );
+	wpseo_save_what( 'metadesc' );
+}
 
-	$meta_key   = WPSEO_Meta::$meta_prefix . 'title';
-	$return_key = 'title';
-	return wpseo_upsert_meta( $post_id, $new_title, $original_title, $meta_key, $return_key );
+add_action( 'wp_ajax_wpseo_save_metadesc', 'wpseo_save_description' );
+
+/**
+ * Save titles & descriptions.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @param string $what Type of item to save (title, description).
+ *
+ * @return void
+ */
+function wpseo_save_what( $what ) {
+	check_ajax_referer( 'wpseo-bulk-editor' );
+
+	if ( ! isset( $_POST['new_value'], $_POST['wpseo_post_id'], $_POST['existing_value'] ) || ! is_string( $_POST['new_value'] ) || ! is_string( $_POST['existing_value'] ) ) {
+		exit( '-1' );
+	}
+
+	$new = sanitize_text_field( wp_unslash( $_POST['new_value'] ) );
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are casting the unsafe value to an integer.
+	$post_id  = (int) wp_unslash( $_POST['wpseo_post_id'] );
+	$original = sanitize_text_field( wp_unslash( $_POST['existing_value'] ) );
+
+	if ( $post_id === 0 ) {
+		exit( '-1' );
+	}
+
+	$results = wpseo_upsert_new( $what, $post_id, $new, $original );
+
+	wpseo_ajax_json_echo_die( $results );
 }
 
 /**
  * Helper function to update a post's meta data, returning relevant information
  * about the information updated and the results or the meta update.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @param int    $post_id         Post ID.
+ * @param string $new_meta_value  New meta value to record.
+ * @param string $orig_meta_value Original meta value.
+ * @param string $meta_key        Meta key string.
+ * @param string $return_key      Return key string to use in results.
+ *
+ * @return array
  */
 function wpseo_upsert_meta( $post_id, $new_meta_value, $orig_meta_value, $meta_key, $return_key ) {
 
-	$upsert_results = array(
+	$post_id                  = (int) $post_id;
+	$sanitized_new_meta_value = wp_strip_all_tags( $new_meta_value );
+	$orig_meta_value          = wp_strip_all_tags( $orig_meta_value );
+
+	$upsert_results = [
 		'status'                 => 'success',
 		'post_id'                => $post_id,
-		"new_{$return_key}"      => $new_meta_value,
+		"new_{$return_key}"      => $sanitized_new_meta_value,
 		"original_{$return_key}" => $orig_meta_value,
-	);
+	];
 
 	$the_post = get_post( $post_id );
 	if ( empty( $the_post ) ) {
-		
+
 		$upsert_results['status']  = 'failure';
 		$upsert_results['results'] = __( 'Post doesn\'t exist.', 'wordpress-seo' );
 
@@ -162,31 +180,49 @@ function wpseo_upsert_meta( $post_id, $new_meta_value, $orig_meta_value, $meta_k
 
 	$post_type_object = get_post_type_object( $the_post->post_type );
 	if ( ! $post_type_object ) {
-		
+
 		$upsert_results['status']  = 'failure';
-		$upsert_results['results'] = sprintf( __( 'Post has an invalid Post Type: %s.', 'wordpress-seo' ), $the_post->post_type );
+		$upsert_results['results'] = sprintf(
+			/* translators: %s expands to post type. */
+			__( 'Post has an invalid Content Type: %s.', 'wordpress-seo' ),
+			$the_post->post_type,
+		);
 
 		return $upsert_results;
 	}
 
 	if ( ! current_user_can( $post_type_object->cap->edit_posts ) ) {
-		
+
 		$upsert_results['status']  = 'failure';
-		$upsert_results['results'] = sprintf( __( 'You can\'t edit %s.', 'wordpress-seo' ), $post_type_object->label );
+		$upsert_results['results'] = sprintf(
+			/* translators: %s expands to post type name. */
+			__( 'You can\'t edit %s.', 'wordpress-seo' ),
+			$post_type_object->label,
+		);
 
 		return $upsert_results;
 	}
 
-	if ( ! current_user_can( $post_type_object->cap->edit_others_posts ) && $the_post->post_author != get_current_user_id() ) {
-		
+	if ( ! current_user_can( $post_type_object->cap->edit_others_posts ) && (int) $the_post->post_author !== get_current_user_id() ) {
+
 		$upsert_results['status']  = 'failure';
-		$upsert_results['results'] = sprintf( __( 'You can\'t edit %s that aren\'t yours.', 'wordpress-seo' ), $post_type_object->label );
+		$upsert_results['results'] = sprintf(
+			/* translators: %s expands to the name of a post type (plural). */
+			__( 'You can\'t edit %s that aren\'t yours.', 'wordpress-seo' ),
+			$post_type_object->label,
+		);
 
 		return $upsert_results;
-
 	}
 
-	$res = update_post_meta( $post_id, $meta_key, $new_meta_value );
+	if ( $sanitized_new_meta_value === $orig_meta_value && $sanitized_new_meta_value !== $new_meta_value ) {
+		$upsert_results['status']  = 'failure';
+		$upsert_results['results'] = __( 'You have used HTML in your value which is not allowed.', 'wordpress-seo' );
+
+		return $upsert_results;
+	}
+
+	$res = update_post_meta( $post_id, $meta_key, $sanitized_new_meta_value );
 
 	$upsert_results['status']  = ( $res !== false ) ? 'success' : 'failure';
 	$upsert_results['results'] = $res;
@@ -196,69 +232,208 @@ function wpseo_upsert_meta( $post_id, $new_meta_value, $orig_meta_value, $meta_k
 
 /**
  * Save all titles sent from the Bulk Editor.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @return void
  */
 function wpseo_save_all_titles() {
-	$new_titles      = $_POST['titles'];
-	$original_titles = $_POST['existing_titles'];
-
-	$results = array();
-
-	if ( is_array( $new_titles ) && $new_titles !== array() ) {
-		foreach ( $new_titles as $id => $new_title ) {
-			$original_title = $original_titles[ $id ];
-			$results[]      = wpseo_upsert_new_title( $id, $new_title, $original_title );
-		}
-	}
-	echo json_encode( $results );
-	die();
+	_deprecated_function( __FUNCTION__, 'Yoast SEO 28.1' );
+	wpseo_save_all( 'title' );
 }
 
 add_action( 'wp_ajax_wpseo_save_all_titles', 'wpseo_save_all_titles' );
 
 /**
- * Save an individual meta description from the Bulk Editor.
- */
-function wpseo_save_description() {
-
-	$new_metadesc      = $_POST['new_metadesc'] ;
-	$id                = intval( $_POST['wpseo_post_id'] );
-	$original_metadesc = $_POST['existing_metadesc'];
-
-	$results = wpseo_upsert_new_description( $id, $new_metadesc, $original_metadesc );
-
-	echo json_encode( $results );
-	die();
-}
-
-add_action( 'wp_ajax_wpseo_save_desc', 'wpseo_save_description' );
-
-/**
- * Helper function to create or update a post's meta description.
- */
-function wpseo_upsert_new_description( $post_id, $new_metadesc, $original_metadesc ) {
-
-	$meta_key   = WPSEO_Meta::$meta_prefix . 'metadesc';
-	$return_key = 'metadesc';
-	return wpseo_upsert_meta( $post_id, $new_metadesc, $original_metadesc, $meta_key, $return_key );
-}
-
-/**
  * Save all description sent from the Bulk Editor.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @return void
  */
 function wpseo_save_all_descriptions() {
-	$new_metadescs      = $_POST['metadescs'];
-	$original_metadescs = $_POST['existing_metadescs'];
-
-	$results = array();
-
-	if ( is_array( $new_metadescs ) && $new_metadescs !== array() ) {
-		foreach ( $new_metadescs as $id => $new_metadesc ) {
-			$original_metadesc = $original_metadescs[ $id ];
-			$results[]         = wpseo_upsert_new_description( $id, $new_metadesc, $original_metadesc );
-		}
-	}
-	echo json_encode( $results );
-	die();
+	_deprecated_function( __FUNCTION__, 'Yoast SEO 28.1' );
+	wpseo_save_all( 'metadesc' );
 }
 
-add_action( 'wp_ajax_wpseo_save_all_descs', 'wpseo_save_all_descriptions' );
+add_action( 'wp_ajax_wpseo_save_all_descriptions', 'wpseo_save_all_descriptions' );
+
+/**
+ * Utility function to save values.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @param string $what Type of item so save.
+ *
+ * @return void
+ */
+function wpseo_save_all( $what ) {
+	check_ajax_referer( 'wpseo-bulk-editor' );
+
+	$results = [];
+	if ( ! isset( $_POST['items'], $_POST['existingItems'] ) ) {
+		wpseo_ajax_json_echo_die( $results );
+	}
+
+	$new_values      = array_map( [ 'WPSEO_Utils', 'sanitize_text_field' ], wp_unslash( (array) $_POST['items'] ) );
+	$original_values = array_map( [ 'WPSEO_Utils', 'sanitize_text_field' ], wp_unslash( (array) $_POST['existingItems'] ) );
+
+	foreach ( $new_values as $post_id => $new_value ) {
+		$original_value = $original_values[ $post_id ];
+		$results[]      = wpseo_upsert_new( $what, $post_id, $new_value, $original_value );
+	}
+
+	wpseo_ajax_json_echo_die( $results );
+}
+
+/**
+ * Insert a new value.
+ *
+ * @deprecated 28.1
+ * @codeCoverageIgnore
+ *
+ * @param string $what      Item type (such as title).
+ * @param int    $post_id   Post ID.
+ * @param string $new_value New value to record.
+ * @param string $original  Original value.
+ *
+ * @return string
+ */
+function wpseo_upsert_new( $what, $post_id, $new_value, $original ) {
+	$meta_key = WPSEO_Meta::$meta_prefix . $what;
+
+	return wpseo_upsert_meta( $post_id, $new_value, $original, $meta_key, $what );
+}
+
+/**
+ * Retrieves the post ids where the keyword is used before as well as the types of those posts.
+ *
+ * @return void
+ */
+function ajax_get_keyword_usage_and_post_types() {
+	check_ajax_referer( 'wpseo-keyword-usage-and-post-types', 'nonce' );
+
+	if ( ! isset( $_POST['post_id'], $_POST['keyword'] ) || ! is_string( $_POST['keyword'] ) ) {
+		exit( '-1' );
+	}
+
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- We are casting to an integer.
+	$post_id = (int) wp_unslash( $_POST['post_id'] );
+
+	if ( $post_id === 0 || ! current_user_can( 'edit_post', $post_id ) ) {
+		exit( '-1' );
+	}
+
+	$keyword = sanitize_text_field( wp_unslash( $_POST['keyword'] ) );
+
+	$post_ids = WPSEO_Meta::keyword_usage( $keyword, $post_id );
+
+	$return_object = [
+		'keyword_usage' => $post_ids,
+		'post_types'    => WPSEO_Meta::post_types_for_ids( $post_ids ),
+	];
+
+	wp_die(
+		// phpcs:ignore WordPress.Security.EscapeOutput -- Reason: WPSEO_Utils::format_json_encode is safe.
+		WPSEO_Utils::format_json_encode( $return_object ),
+	);
+}
+
+add_action( 'wp_ajax_get_focus_keyword_usage_and_post_types', 'ajax_get_keyword_usage_and_post_types' );
+
+/**
+ * Retrieves the keyword for the keyword doubles of the termpages.
+ *
+ * @return void
+ */
+function ajax_get_term_keyword_usage() {
+	check_ajax_referer( 'wpseo-keyword-usage', 'nonce' );
+
+	if ( ! isset( $_POST['post_id'], $_POST['keyword'], $_POST['taxonomy'] ) || ! is_string( $_POST['keyword'] ) || ! is_string( $_POST['taxonomy'] ) ) {
+		wp_die( -1 );
+	}
+
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are casting the unsafe input to an integer.
+	$post_id = (int) wp_unslash( $_POST['post_id'] );
+
+	if ( $post_id === 0 ) {
+		wp_die( -1 );
+	}
+
+	$keyword       = sanitize_text_field( wp_unslash( $_POST['keyword'] ) );
+	$taxonomy_name = sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) );
+
+	$taxonomy = get_taxonomy( $taxonomy_name );
+
+	if ( ! $taxonomy ) {
+		wp_die( 0 );
+	}
+
+	if ( ! current_user_can( $taxonomy->cap->edit_terms ) ) {
+		wp_die( -1 );
+	}
+
+	$usage = WPSEO_Taxonomy_Meta::get_keyword_usage( $keyword, $post_id, $taxonomy_name );
+
+	// Normalize the result so it is the same as the post keyword usage AJAX request.
+	$usage = $usage[ $keyword ];
+
+	wp_die(
+		// phpcs:ignore WordPress.Security.EscapeOutput -- Reason: WPSEO_Utils::format_json_encode is safe.
+		WPSEO_Utils::format_json_encode( $usage ),
+	);
+}
+
+add_action( 'wp_ajax_get_term_keyword_usage', 'ajax_get_term_keyword_usage' );
+
+/**
+ * Registers hooks for all AJAX integrations.
+ *
+ * @return void
+ */
+function wpseo_register_ajax_integrations() {
+	$integrations = [ new Yoast_Network_Admin() ];
+
+	foreach ( $integrations as $integration ) {
+		$integration->register_ajax_hooks();
+	}
+}
+
+wpseo_register_ajax_integrations();
+
+new WPSEO_Shortcode_Filter();
+
+new WPSEO_Taxonomy_Columns();
+
+/* ********************* DEPRECATED FUNCTIONS ********************* */
+
+/**
+ * Retrieves the keyword for the keyword doubles.
+ *
+ * @return void
+ */
+function ajax_get_keyword_usage() {
+	_deprecated_function( __METHOD__, 'WPSEO 20.4' );
+	check_ajax_referer( 'wpseo-keyword-usage', 'nonce' );
+
+	if ( ! isset( $_POST['post_id'], $_POST['keyword'] ) || ! is_string( $_POST['keyword'] ) ) {
+		exit( '-1' );
+	}
+
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- We are casting to an integer.
+	$post_id = (int) wp_unslash( $_POST['post_id'] );
+
+	if ( $post_id === 0 || ! current_user_can( 'edit_post', $post_id ) ) {
+		exit( '-1' );
+	}
+
+	$keyword = sanitize_text_field( wp_unslash( $_POST['keyword'] ) );
+
+	wp_die(
+		// phpcs:ignore WordPress.Security.EscapeOutput -- Reason: WPSEO_Utils::format_json_encode is safe.
+		WPSEO_Utils::format_json_encode( WPSEO_Meta::keyword_usage( $keyword, $post_id ) ),
+	);
+}

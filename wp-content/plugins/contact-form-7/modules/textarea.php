@@ -3,157 +3,219 @@
 ** A base module for [textarea] and [textarea*]
 **/
 
-/* Shortcode handler */
+/* form_tag handler */
 
-add_action( 'wpcf7_init', 'wpcf7_add_shortcode_textarea' );
+add_action( 'wpcf7_init', 'wpcf7_add_form_tag_textarea', 10, 0 );
 
-function wpcf7_add_shortcode_textarea() {
-	wpcf7_add_shortcode( array( 'textarea', 'textarea*' ),
-		'wpcf7_textarea_shortcode_handler', true );
+function wpcf7_add_form_tag_textarea() {
+	wpcf7_add_form_tag( array( 'textarea', 'textarea*' ),
+		'wpcf7_textarea_form_tag_handler', array( 'name-attr' => true )
+	);
 }
 
-function wpcf7_textarea_shortcode_handler( $tag ) {
-	$tag = new WPCF7_Shortcode( $tag );
-
-	if ( empty( $tag->name ) )
+function wpcf7_textarea_form_tag_handler( $tag ) {
+	if ( empty( $tag->name ) ) {
 		return '';
+	}
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 
 	$class = wpcf7_form_controls_class( $tag->type );
 
-	if ( $validation_error )
+	if ( $validation_error ) {
 		$class .= ' wpcf7-not-valid';
+	}
 
 	$atts = array();
 
 	$atts['cols'] = $tag->get_cols_option( '40' );
 	$atts['rows'] = $tag->get_rows_option( '10' );
-	$atts['maxlength'] = $tag->get_maxlength_option();
+	$atts['maxlength'] = $tag->get_maxlength_option( '2000' );
+	$atts['minlength'] = $tag->get_minlength_option();
+
+	if (
+		$atts['maxlength'] and $atts['minlength'] and
+		$atts['maxlength'] < $atts['minlength']
+	) {
+		unset( $atts['maxlength'], $atts['minlength'] );
+	}
+
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_id_option();
-	$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
+	$atts['tabindex'] = $tag->get_option( 'tabindex', 'signed_int', true );
+	$atts['readonly'] = $tag->has_option( 'readonly' );
+	$atts['autocomplete'] = $tag->get_autocomplete_option();
 
-	if ( $tag->has_option( 'readonly' ) )
-		$atts['readonly'] = 'readonly';
-
-	if ( $tag->is_required() )
+	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
+	}
 
-	$atts['aria-invalid'] = $validation_error ? 'true' : 'false';
+	if ( $validation_error ) {
+		$atts['aria-invalid'] = 'true';
+		$atts['aria-describedby'] = wpcf7_get_validation_error_reference(
+			$tag->name
+		);
+	} else {
+		$atts['aria-invalid'] = 'false';
+	}
 
-	$value = (string) reset( $tag->values );
+	$value = empty( $tag->content )
+		? (string) reset( $tag->values )
+		: $tag->content;
 
-	if ( '' !== $tag->content )
-		$value = $tag->content;
-
-	if ( $tag->has_option( 'placeholder' ) || $tag->has_option( 'watermark' ) ) {
+	if ( $tag->has_option( 'placeholder' ) or $tag->has_option( 'watermark' ) ) {
 		$atts['placeholder'] = $value;
 		$value = '';
 	}
 
-	if ( wpcf7_is_posted() && isset( $_POST[$tag->name] ) )
-		$value = wp_unslash( $_POST[$tag->name] );
+	$value = $tag->get_default_option( $value );
+
+	$value = wpcf7_get_hangover( $tag->name, $value );
 
 	$atts['name'] = $tag->name;
 
-	$atts = wpcf7_format_atts( $atts );
-
 	$html = sprintf(
-		'<span class="wpcf7-form-control-wrap %1$s"><textarea %2$s>%3$s</textarea>%4$s</span>',
-		sanitize_html_class( $tag->name ), $atts,
-		esc_textarea( $value ), $validation_error );
+		'<span class="wpcf7-form-control-wrap" data-name="%1$s"><textarea %2$s>%3$s</textarea>%4$s</span>',
+		esc_attr( $tag->name ),
+		wpcf7_format_atts( $atts ),
+		esc_textarea( $value ),
+		$validation_error
+	);
 
 	return $html;
 }
 
 
-/* Validation filter */
+add_action(
+	'wpcf7_swv_create_schema',
+	'wpcf7_swv_add_textarea_rules',
+	10, 2
+);
 
-add_filter( 'wpcf7_validate_textarea', 'wpcf7_textarea_validation_filter', 10, 2 );
-add_filter( 'wpcf7_validate_textarea*', 'wpcf7_textarea_validation_filter', 10, 2 );
+function wpcf7_swv_add_textarea_rules( $schema, $contact_form ) {
+	$tags = $contact_form->scan_form_tags( array(
+		'basetype' => array( 'textarea' ),
+	) );
 
-function wpcf7_textarea_validation_filter( $result, $tag ) {
-	$tag = new WPCF7_Shortcode( $tag );
+	foreach ( $tags as $tag ) {
+		if ( $tag->is_required() ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'required', array(
+					'field' => $tag->name,
+					'error' => wpcf7_get_message( 'invalid_required' ),
+				) )
+			);
+		}
 
-	$type = $tag->type;
-	$name = $tag->name;
+		if ( $minlength = $tag->get_minlength_option() ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'minlength', array(
+					'field' => $tag->name,
+					'threshold' => absint( $minlength ),
+					'error' => wpcf7_get_message( 'invalid_too_short' ),
+				) )
+			);
+		}
 
-	$value = isset( $_POST[$name] ) ? (string) $_POST[$name] : '';
-
-	if ( 'textarea*' == $type ) {
-		if ( '' == $value ) {
-			$result['valid'] = false;
-			$result['reason'][$name] = wpcf7_get_message( 'invalid_required' );
+		if ( $maxlength = $tag->get_maxlength_option( '2000' ) ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'maxlength', array(
+					'field' => $tag->name,
+					'threshold' => absint( $maxlength ),
+					'error' => wpcf7_get_message( 'invalid_too_long' ),
+				) )
+			);
 		}
 	}
-
-	if ( isset( $result['reason'][$name] ) && $id = $tag->get_id_option() ) {
-		$result['idref'][$name] = $id;
-	}
-
-	return $result;
 }
 
 
 /* Tag generator */
 
-add_action( 'admin_init', 'wpcf7_add_tag_generator_textarea', 20 );
+add_action( 'wpcf7_admin_init', 'wpcf7_add_tag_generator_textarea', 20, 0 );
 
 function wpcf7_add_tag_generator_textarea() {
-	if ( ! function_exists( 'wpcf7_add_tag_generator' ) )
-		return;
+	$tag_generator = WPCF7_TagGenerator::get_instance();
 
-	wpcf7_add_tag_generator( 'textarea', __( 'Text area', 'contact-form-7' ),
-		'wpcf7-tg-pane-textarea', 'wpcf7_tg_pane_textarea' );
+	$tag_generator->add( 'textarea',
+		__( 'text area', 'contact-form-7' ),
+		'wpcf7_tag_generator_textarea',
+		array( 'version' => '2' )
+	);
 }
 
-function wpcf7_tg_pane_textarea( &$contact_form ) {
-?>
-<div id="wpcf7-tg-pane-textarea" class="hidden">
-<form action="">
-<table>
-<tr><td><input type="checkbox" name="required" />&nbsp;<?php echo esc_html( __( 'Required field?', 'contact-form-7' ) ); ?></td></tr>
-<tr><td><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?><br /><input type="text" name="name" class="tg-name oneline" /></td><td></td></tr>
-</table>
+function wpcf7_tag_generator_textarea( $contact_form, $options ) {
+	$field_types = array(
+		'textarea' => array(
+			'display_name' => __( 'Text area', 'contact-form-7' ),
+			'heading' => __( 'Text area form-tag generator', 'contact-form-7' ),
+			'description' => __( 'Generates a form-tag for a <a href="https://contactform7.com/text-fields/">multi-line plain text input area</a>.', 'contact-form-7' ),
+		),
+	);
 
-<table>
-<tr>
-<td><code>id</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="text" name="id" class="idvalue oneline option" /></td>
+	$tgg = new WPCF7_TagGeneratorGenerator( $options['content'] );
 
-<td><code>class</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="text" name="class" class="classvalue oneline option" /></td>
-</tr>
+	$formatter = new WPCF7_HTMLFormatter();
 
-<tr>
-<td><code>cols</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="number" name="cols" class="numeric oneline option" min="1" /></td>
+	$formatter->append_start_tag( 'header', array(
+		'class' => 'description-box',
+	) );
 
-<td><code>rows</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="number" name="rows" class="numeric oneline option" min="1" /></td>
-</tr>
+	$formatter->append_start_tag( 'h3' );
 
-<tr>
-<td><code>maxlength</code> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br />
-<input type="number" name="maxlength" class="numeric oneline option" min="1" /></td>
-</tr>
+	$formatter->append_preformatted(
+		esc_html( $field_types['textarea']['heading'] )
+	);
 
-<tr>
-<td><?php echo esc_html( __( 'Default value', 'contact-form-7' ) ); ?> (<?php echo esc_html( __( 'optional', 'contact-form-7' ) ); ?>)<br /><input type="text" name="values" class="oneline" /></td>
+	$formatter->end_tag( 'h3' );
 
-<td>
-<br /><input type="checkbox" name="placeholder" class="option" />&nbsp;<?php echo esc_html( __( 'Use this text as placeholder?', 'contact-form-7' ) ); ?>
-</td>
-</tr>
-</table>
+	$formatter->append_start_tag( 'p' );
 
-<div class="tg-tag"><?php echo esc_html( __( "Copy this code and paste it into the form left.", 'contact-form-7' ) ); ?><br /><input type="text" name="textarea" class="tag wp-ui-text-highlight code" readonly="readonly" onfocus="this.select()" /></div>
+	$formatter->append_preformatted(
+		wp_kses_data( $field_types['textarea']['description'] )
+	);
 
-<div class="tg-mail-tag"><?php echo esc_html( __( "And, put this code into the Mail fields below.", 'contact-form-7' ) ); ?><br /><input type="text" class="mail-tag wp-ui-text-highlight code" readonly="readonly" onfocus="this.select()" /></div>
-</form>
-</div>
-<?php
+	$formatter->end_tag( 'header' );
+
+	$formatter->append_start_tag( 'div', array(
+		'class' => 'control-box',
+	) );
+
+	$formatter->call_user_func( static function () use ( $tgg, $field_types ) {
+		$tgg->print( 'field_type', array(
+			'with_required' => true,
+			'select_options' => array(
+				'textarea' => $field_types['textarea']['display_name'],
+			),
+		) );
+
+		$tgg->print( 'field_name' );
+
+		$tgg->print( 'class_attr' );
+
+		$tgg->print( 'min_max', array(
+			'title' => __( 'Length', 'contact-form-7' ),
+			'min_option' => 'minlength:',
+			'max_option' => 'maxlength:',
+		) );
+
+		$tgg->print( 'default_value', array(
+			'with_placeholder' => true,
+			'use_content' => true,
+		) );
+	} );
+
+	$formatter->end_tag( 'div' );
+
+	$formatter->append_start_tag( 'footer', array(
+		'class' => 'insert-box',
+	) );
+
+	$formatter->call_user_func( static function () use ( $tgg, $field_types ) {
+		$tgg->print( 'insert_box_content' );
+
+		$tgg->print( 'mail_tag_tip' );
+	} );
+
+	$formatter->print();
 }
-
-?>
